@@ -15,6 +15,14 @@ public:
     explicit mainWidget(QWidget *parent = 0);
     ~mainWidget();
 
+private slots:
+
+    void on_adminButton_clicked();
+
+    void on_officerButton_clicked();
+
+    void on_quitButton_clicked();
+
 private:
     Ui::mainWidget *ui;
 };
