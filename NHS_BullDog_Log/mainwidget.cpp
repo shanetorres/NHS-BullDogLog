@@ -14,3 +14,21 @@ mainWidget::~mainWidget()
 {
     delete ui;
 }
+
+
+
+void mainWidget::on_adminButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void mainWidget::on_officerButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(2);
+}
+
+
+void mainWidget::on_quitButton_clicked()
+{
+    QApplication::quit();
+}
