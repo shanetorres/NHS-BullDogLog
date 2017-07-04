@@ -6,69 +6,126 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>955</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>mainWidget</string>
   </property>
-  <widget class="QStackedWidget" name="stackedWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>381</width>
-     <height>281</height>
-    </rect>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <widget class="QWidget" name="startPage">
-    <widget class="QPushButton" name="adminButton">
-     <property name="geometry">
-      <rect>
-       <x>210</x>
-       <y>100</y>
-       <width>141</width>
-       <height>31</height>
-      </rect>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="text">
-      <string>Admin Records</string>
-     </property>
+     <widget class="QWidget" name="startPage">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="buttonsGroupBox">
+         <property name="title">
+          <string>Select one to continue...</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QPushButton" name="adminButton">
+            <property name="text">
+             <string>Admin Records</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="officerButton">
+            <property name="text">
+             <string>Officer Records</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="quitButton">
+            <property name="text">
+             <string>Quit</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>There will eventually be a picture here</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="adminPage"/>
+     <widget class="QWidget" name="officerPage">
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="overallTab">
+          <attribute name="title">
+           <string>Overall</string>
+          </attribute>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="1">
+            <widget class="QGroupBox" name="groupBox">
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="title">
+              <string>Officer Records</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QPushButton" name="offAddStudentButton">
+                <property name="text">
+                 <string>Add Student</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="offDeleteStudentButton">
+                <property name="text">
+                 <string>Delete Student</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="offMenuButton">
+                <property name="text">
+                 <string>Main Menu</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QTableView" name="tableView"/>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="cont_tab">
+          <attribute name="title">
+           <string>Contributions</string>
+          </attribute>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
-    <widget class="QPushButton" name="officerButton">
-     <property name="geometry">
-      <rect>
-       <x>210</x>
-       <y>140</y>
-       <width>141</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Officer Records</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="quitButton">
-     <property name="geometry">
-      <rect>
-       <x>240</x>
-       <y>180</y>
-       <width>80</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Quit</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="adminPage"/>
-   <widget class="QWidget" name="officerAge"/>
-  </widget>
+   </item>
+  </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
