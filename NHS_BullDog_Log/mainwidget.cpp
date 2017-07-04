@@ -32,3 +32,9 @@ void mainWidget::on_quitButton_clicked()
 {
     QApplication::quit();
 }
+
+//Overall Tab on Officer Page
+void mainWidget::on_offMenuButton_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(0);
+}

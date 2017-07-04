@@ -23,6 +23,8 @@ private slots:
 
     void on_quitButton_clicked();
 
+    void on_offMenuButton_clicked();
+
 private:
     Ui::mainWidget *ui;
 };
