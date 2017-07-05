@@ -29,6 +29,12 @@ private slots:
 
     void on_offAddStudentButton_clicked();
 
+    void on_offDeleteStudentButton_clicked();
+
+    void officerDeleteRecord();
+
+    void enableButtons();
+
 private:
     Ui::mainWidget *ui;
     QStandardItemModel* currentStudentsModel;
