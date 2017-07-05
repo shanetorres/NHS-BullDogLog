@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>545</height>
+    <width>902</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="startPage">
       <layout class="QGridLayout" name="gridLayout">
@@ -110,7 +110,7 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QTableView" name="tableView"/>
+            <widget class="QTableView" name="currentTableView"/>
            </item>
           </layout>
          </widget>
