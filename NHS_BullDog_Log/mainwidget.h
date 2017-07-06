@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QStandardItemModel>
+#include "officerdelegate.h"
 
 namespace Ui {
 class mainWidget;
@@ -39,6 +40,6 @@ private:
     Ui::mainWidget *ui;
     QStandardItemModel* currentStudentsModel;
     const int currentStudentCols = 6;
+    officerDelegate *currentStudentsDelegate;
 };
-
 #endif // MAINWIDGET_H

@@ -18,8 +18,10 @@ mainWidget::mainWidget(QWidget *parent) :
     /*OFFICER RECORDS*/
 
     //creating the model for all current students and setting resizing parameters for the view
+    currentStudentsDelegate = new officerDelegate(this);
     currentStudentsModel = new QStandardItemModel(this);
     ui->currentTableView->setModel(currentStudentsModel);
+    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     //setting the header text of the model
@@ -36,29 +38,15 @@ mainWidget::~mainWidget()
     delete ui;
 }
 
+void mainWidget::on_adminButton_clicked() { ui->stackedWidget->setCurrentIndex(1); }
+
+void mainWidget::on_officerButton_clicked() { ui->stackedWidget->setCurrentIndex(2); }
 
 
-void mainWidget::on_adminButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(1);
-}
-
-void mainWidget::on_officerButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(2);
-}
-
-
-void mainWidget::on_quitButton_clicked()
-{
-    QApplication::quit();
-}
+void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
 //OVERALL TAB ON OFFICER PAGE
-void mainWidget::on_offMenuButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-}
+void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); }
 
 void mainWidget::on_offAddStudentButton_clicked()
 {
