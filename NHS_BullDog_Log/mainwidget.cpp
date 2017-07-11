@@ -3,6 +3,9 @@
 #include <QtCore>
 #include <QtGui>
 #include <QMessageBox>
+#include <qDebug>
+#include <iostream>
+#include <QModelIndex>
 
 mainWidget::mainWidget(QWidget *parent) :
     QWidget(parent),
@@ -17,9 +20,14 @@ mainWidget::mainWidget(QWidget *parent) :
 
     /*OFFICER RECORDS*/
 
+    //instantiating the custom delegate and connecting a signal to the studentEdited slot to allow for data to be transferred
+    currentStudentsDelegate = new officerDelegate(this);
+    connect(currentStudentsDelegate, SIGNAL(studentEdited(CurrentStudent, int)), this, SLOT(on_studentEdited(CurrentStudent, int)));
+
     //creating the model for all current students and setting resizing parameters for the view
     currentStudentsModel = new QStandardItemModel(this);
     ui->currentTableView->setModel(currentStudentsModel);
+    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     //setting the header text of the model
@@ -36,29 +44,17 @@ mainWidget::~mainWidget()
     delete ui;
 }
 
+void mainWidget::on_adminButton_clicked() { ui->stackedWidget->setCurrentIndex(1); }
+
+void mainWidget::on_officerButton_clicked() { ui->stackedWidget->setCurrentIndex(2); }
+
+void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
 
-void mainWidget::on_adminButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(1);
-}
-
-void mainWidget::on_officerButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(2);
-}
-
-
-void mainWidget::on_quitButton_clicked()
-{
-    QApplication::quit();
-}
 
 //OVERALL TAB ON OFFICER PAGE
-void mainWidget::on_offMenuButton_clicked()
-{
-    ui->stackedWidget->setCurrentIndex(0);
-}
+
+void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); }
 
 void mainWidget::on_offAddStudentButton_clicked()
 {
@@ -69,6 +65,17 @@ void mainWidget::on_offAddStudentButton_clicked()
        newRecord.append(new QStandardItem(""));
    }
    currentStudentsModel->appendRow(newRecord);
+
+   //creating a currentstudent object and pushing it into a vector everytime a row is added
+   CurrentStudent student;
+   currentStudents.push_back(student);
+
+
+   totalStudents++;
+   for (int i = 0; i < currentStudents.size(); i++)
+   {
+       qDebug() << "STUDENT " << i << "NAME: " << currentStudents[i].getFirstName();
+   }
 }
 
 void mainWidget::on_offDeleteStudentButton_clicked()
@@ -89,9 +96,15 @@ void mainWidget::on_offDeleteStudentButton_clicked()
     }
 }
 
-//deletes the selected record from the view
+//deletes the selected record from the view as well as from the vector
 void mainWidget::officerDeleteRecord()
 {
+
+    if (totalStudents != 0)
+    {
+        currentStudents.erase(currentStudents.begin()+ui->currentTableView->currentIndex().row());
+        totalStudents--;
+    }
     currentStudentsModel->removeRows(ui->currentTableView->currentIndex().row(),1);
     enableButtons();
 }
@@ -102,4 +115,20 @@ void mainWidget::enableButtons()
     ui->offDeleteStudentButton->setEnabled(true);
     ui->offMenuButton->setEnabled(true);
     ui->offAddStudentButton->setEnabled(true);
+}
+
+//this slot assigns the emitted student to a student in the currentStudents vector
+void mainWidget::on_studentEdited(CurrentStudent student, int row)
+{
+    //these statements set the data for an object in the vector using the values from the delegate and the row as the index
+    currentStudents[row].setFirstName(student.getFirstName());
+    currentStudents[row].setLastName(student.getLastName());
+    currentStudents[row].setContributions(student.getContributions());
+    currentStudents[row].setServProjects(student.getServProjects());
+    currentStudents[row].setAttendedMeetings(student.getAttendedMeetings());
+    currentStudents[row].setInductionAttendance(student.getInductionAttendance());
+
+    qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName() << ", " <<
+                currentStudents[row].getContributions() << ", " << currentStudents[row].getServProjects() << ", " << currentStudents[row].getAttendedMeetings() << ", "
+             << currentStudents[row].getInductionAttendance();
 }

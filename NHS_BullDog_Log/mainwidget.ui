@@ -119,6 +119,11 @@
            <string>Contributions</string>
           </attribute>
          </widget>
+         <widget class="QWidget" name="service_tab">
+          <attribute name="title">
+           <string>Service Projects</string>
+          </attribute>
+         </widget>
         </widget>
        </item>
       </layout>
