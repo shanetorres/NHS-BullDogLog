@@ -6,6 +6,12 @@
 #include <QObject>
 #include <QSize>
 #include <QLineEdit>
+#include <QString>
+#include "currentstudent.h"
+#include <vector>
+#include <QVector>
+
+class CurrentStudent;
 
 class officerDelegate : public QItemDelegate
 {
@@ -22,8 +28,13 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
+    void studentEdited(CurrentStudent, int) const;
+
 
 public slots:
+
+private:
+   const int totalData = 6;
 };
 
 #endif // OFFICERDELEGATE_H

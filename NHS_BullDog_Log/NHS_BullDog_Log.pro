@@ -26,10 +26,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwidget.cpp \
-    officerdelegate.cpp
+    officerdelegate.cpp \
+    currentstudent.cpp
 
 HEADERS  += mainwidget.h \
-    officerdelegate.h
+    officerdelegate.h \
+    currentstudent.h
 
 FORMS    += mainwidget.ui
 
