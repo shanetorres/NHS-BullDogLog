@@ -9,28 +9,28 @@ class CurrentStudent
 {
 public:
     CurrentStudent();
-    CurrentStudent(QString, QString, QString, QString, QString, QString);
+    CurrentStudent(QString, QString, int, int, int, bool);
     void setFirstName(QString);
     QString getFirstName();
     void setLastName(QString);
     QString getLastName();
-    void setContributions(QString);
-    QString getContributions();
-    void setServProjects(QString);
-    QString getServProjects();
-    void setAttendedMeetings(QString);
-    QString getAttendedMeetings();
-    void setInductionAttendance(QString);
-    QString getInductionAttendance();
+    void setContributions(int);
+    int getContributions();
+    void setServProjects(int);
+    int getServProjects();
+    void setAttendedMeetings(int);
+    int getAttendedMeetings();
+    void setInductionAttendance(bool);
+    bool getInductionAttendance();
 
 
 private:
     QString firstName;
     QString lastName;
-    QString contributions;
-    QString servProjects;
-    QString attendedMeetings;
-    QString inductionAttend;
+    int contributions;
+    int servProjects;
+    int attendedMeetings;
+    bool inductionAttend;
 };
 
 #endif // CURRENTSTUDENT_H

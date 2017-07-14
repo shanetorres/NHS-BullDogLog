@@ -5,6 +5,8 @@
 #include <QStandardItemModel>
 #include "officerdelegate.h"
 #include "currentstudent.h"
+#include "officerspindelegate.h"
+#include "officercombodelegate.h"
 #include <vector>
 
 namespace Ui {
@@ -21,6 +23,7 @@ public:
     void enableButtons();
     void officerDeleteRecord();
 
+
 private slots:
 
     void on_adminButton_clicked();
@@ -35,7 +38,13 @@ private slots:
 
     void on_offDeleteStudentButton_clicked();
 
-    void on_studentEdited(CurrentStudent, int);
+    //Signals from delegates
+
+    void on_studentNameEdited(CurrentStudent, int);
+
+    void on_studentSpinEdited(CurrentStudent, int);
+
+    void on_studentComboEdited(CurrentStudent, int);
 
 private:
     Ui::mainWidget *ui;
@@ -44,5 +53,7 @@ private:
     officerDelegate *currentStudentsDelegate;
     std::vector<CurrentStudent> currentStudents;
     int totalStudents;
+    OfficerSpinDelegate *spinDelegate;
+    OfficerComboDelegate *comboDelegate;
 };
 #endif // MAINWIDGET_H

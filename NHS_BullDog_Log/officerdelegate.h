@@ -10,6 +10,10 @@
 #include "currentstudent.h"
 #include <vector>
 #include <QVector>
+#include <QSpinBox>
+
+
+
 
 class CurrentStudent;
 
@@ -28,13 +32,14 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void studentEdited(CurrentStudent, int) const;
+    void studentNameEdited(CurrentStudent, int) const;
 
 
 public slots:
 
 private:
-   const int totalData = 6;
+   const int totalData = 2;
+
 };
 
 #endif // OFFICERDELEGATE_H

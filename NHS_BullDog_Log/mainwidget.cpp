@@ -13,22 +13,40 @@ mainWidget::mainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    /*ADMIN RECORDS*/
+    /*----------------------------ADMIN RECORDS------------------------------*/
 
 
 
 
-    /*OFFICER RECORDS*/
+    /*----------------------------OFFICER RECORDS----------------------------*/
+
+    /*<OVERALL PAGE>*/
 
     //instantiating the custom delegate and connecting a signal to the studentEdited slot to allow for data to be transferred
     currentStudentsDelegate = new officerDelegate(this);
-    connect(currentStudentsDelegate, SIGNAL(studentEdited(CurrentStudent, int)), this, SLOT(on_studentEdited(CurrentStudent, int)));
+    spinDelegate = new OfficerSpinDelegate(this);
+    comboDelegate =new OfficerComboDelegate(this);
+
+    //connecting all delegates to desired slots on the mainwidget
+    connect(currentStudentsDelegate, SIGNAL(studentNameEdited(CurrentStudent, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int)));
+    connect(spinDelegate, SIGNAL(studentSpinBoxEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
+    connect(comboDelegate, SIGNAL(studentComboBoxEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
 
     //creating the model for all current students and setting resizing parameters for the view
     currentStudentsModel = new QStandardItemModel(this);
     ui->currentTableView->setModel(currentStudentsModel);
-    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    //assigning delegates to specific columns
+    ui->currentTableView->setItemDelegateForColumn(0, currentStudentsDelegate);
+    ui->currentTableView->setItemDelegateForColumn(1, currentStudentsDelegate);
+    for (int i = 2; i < 5; i++)
+    {
+        ui->currentTableView->setItemDelegateForColumn(i, spinDelegate);
+    }
+    ui->currentTableView->setItemDelegateForColumn(5, comboDelegate);
+
+
 
     //setting the header text of the model
     currentStudentsModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
@@ -37,6 +55,9 @@ mainWidget::mainWidget(QWidget *parent) :
     currentStudentsModel->setHorizontalHeaderItem(3, new QStandardItem(QString("Service Projects")));
     currentStudentsModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Meetings Attended")));
     currentStudentsModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Induction Attendance")));
+
+    /*<END OVERALL PAGE>*/
+
 }
 
 mainWidget::~mainWidget()
@@ -52,7 +73,7 @@ void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
 
 
-//OVERALL TAB ON OFFICER PAGE
+/*---------------------OVERALL TAB ON OFFICER PAGE--------------------*/
 
 void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); }
 
@@ -117,18 +138,37 @@ void mainWidget::enableButtons()
     ui->offAddStudentButton->setEnabled(true);
 }
 
+/*DELEGATE SLOTS FROM OVERALL PAGE ON OFFICER RECORDS*/
+
 //this slot assigns the emitted student to a student in the currentStudents vector
-void mainWidget::on_studentEdited(CurrentStudent student, int row)
+void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
 {
     //these statements set the data for an object in the vector using the values from the delegate and the row as the index
     currentStudents[row].setFirstName(student.getFirstName());
     currentStudents[row].setLastName(student.getLastName());
+
+
+    qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
+}
+
+//saves the data entered in the spinboxes into the currentStudents vector
+void mainWidget::on_studentSpinEdited(CurrentStudent student, int row)
+{
     currentStudents[row].setContributions(student.getContributions());
     currentStudents[row].setServProjects(student.getServProjects());
     currentStudents[row].setAttendedMeetings(student.getAttendedMeetings());
-    currentStudents[row].setInductionAttendance(student.getInductionAttendance());
 
-    qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName() << ", " <<
-                currentStudents[row].getContributions() << ", " << currentStudents[row].getServProjects() << ", " << currentStudents[row].getAttendedMeetings() << ", "
-             << currentStudents[row].getInductionAttendance();
+     qDebug() << "Student Data AFTER SPIN: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName()
+              << currentStudents[row].getContributions() << ", " << currentStudents[row].getServProjects()
+              << ", " << currentStudents[row].getAttendedMeetings() << " " << currentStudents[row].getInductionAttendance();
 }
+
+//saves the data entered in the combo  box into the currentStudents vector
+void mainWidget::on_studentComboEdited(CurrentStudent student, int row)
+{
+    currentStudents[row].setInductionAttendance(student.getInductionAttendance());
+}
+
+/*END OFFICER OVERALL DELEGATE SLOTS*/
+
+/*-------------------END OVERALL TAB ON OFFICER RECORDS-------------------*/

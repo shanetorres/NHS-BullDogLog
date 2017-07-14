@@ -8,10 +8,13 @@ officerDelegate::officerDelegate(QObject *parent) : QItemDelegate(parent)
 
 }
 
-QWidget *officerDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget *officerDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &/*index*/) const
 {
+
     QLineEdit *editor = new QLineEdit(parent);
     return editor;
+
+
 }
 
 void officerDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
@@ -33,7 +36,7 @@ void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
        QVector<QString> studentData(totalData);
 
        //a vector of QStrings saves data at specific cells in the tableView
-        for (int i = 0; i < 6; ++i)
+        for (int i = 0; i < totalData; ++i)
         {
             QModelIndex dataIndex = model->index(index.row(), i, QModelIndex());
             studentData[i] = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
@@ -42,18 +45,16 @@ void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
         //all student data is assigned to a specific value from the vector of strings
         QString studentFirstName = studentData[0];
         QString studentLastName = studentData[1];
-        QString studentContributions = studentData[2];
-        QString studentServProjects = studentData[3];
-        QString studentMeetings = studentData[4];
-        QString studentInduction = studentData[5];
 
-        CurrentStudent student(studentFirstName, studentLastName, studentContributions, studentServProjects, studentMeetings, studentInduction);
 
-        qDebug() << "After" << student.getFirstName() << " " << student.getLastName() << " "
-                << student.getContributions() << " " << student.getServProjects() << " " << student.getInductionAttendance();
+        CurrentStudent student;
+        student.setFirstName(studentFirstName);
+        student.setLastName(studentLastName);
+
+        qDebug() << "After" << student.getFirstName() << " " << student.getLastName();
 
        //a signal that sends the student object and row number to the mainwidget
-       emit studentEdited(student, index.row());
+       emit studentNameEdited(student, index.row());
 
 }
 
