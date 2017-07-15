@@ -10,7 +10,10 @@ CurrentStudent::CurrentStudent(QString first, QString last, int cont, int serv, 
 {
     setFirstName(first);
     setLastName(last);
-
+    setContributions(cont);
+    setServProjects(serv);
+    setAttendedMeetings(meetings);
+    setInductionAttendance(induct);
 
 }
 
