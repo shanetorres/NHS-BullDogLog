@@ -120,7 +120,7 @@ void mainWidget::on_offDeleteStudentButton_clicked()
 //deletes the selected record from the view as well as from the vector
 void mainWidget::officerDeleteRecord()
 {
-
+    //removes current student from vector
     if (totalStudents != 0)
     {
         currentStudents.erase(currentStudents.begin()+ui->currentTableView->currentIndex().row());
