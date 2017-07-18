@@ -27,17 +27,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwidget.cpp \
     officerdelegate.cpp \
-    currentstudent.cpp \
-    officerspindelegate.cpp \
-    officercombodelegate.cpp
+    currentstudent.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
-    currentstudent.h \
-    officerspindelegate.h \
-    officercombodelegate.h
+    currentstudent.h
 
 FORMS    += mainwidget.ui
 
 RESOURCES += \
     pictures.qrc
+
+DISTFILES += \
+    data/currentstudents.csv

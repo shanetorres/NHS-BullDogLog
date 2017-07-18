@@ -2,7 +2,12 @@
 
 CurrentStudent::CurrentStudent()
 {
-
+//    setFirstName(" ");
+//    setLastName(" ");
+//    setContributions(0);
+//    setServProjects(0);
+//    setAttendedMeetings(0);
+//    setInductionAttendance(false);
 }
 
 //default constructor assigns all inputted data to data members of the class via the set functions
