@@ -19,11 +19,16 @@ class mainWidget : public QWidget
 
 public:
     explicit mainWidget(QWidget *parent = 0);
+
     ~mainWidget();
+
     void enableButtons();
+
     void officerDeleteRecord();
+
     void writeToFile();
 
+    void populateCurrentStudentsModel();
 
 private slots:
 
@@ -42,7 +47,9 @@ private slots:
     //Signals from delegates
 
     void on_studentNameEdited(CurrentStudent, int);
+
     void on_studentSpinEdited(CurrentStudent, int);
+
     void on_studentComboEdited(CurrentStudent, int);
 
 private:

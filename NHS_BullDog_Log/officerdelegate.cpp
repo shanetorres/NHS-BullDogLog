@@ -7,6 +7,7 @@
 
 officerDelegate::officerDelegate(QObject *parent) : QItemDelegate(parent)
 {
+    //the text that is dispalyed in the combo box
     Items.push_back(" ");
     Items.push_back("Yes");
     Items.push_back("No");
@@ -14,6 +15,7 @@ officerDelegate::officerDelegate(QObject *parent) : QItemDelegate(parent)
 
 QWidget *officerDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
+    //control statement determines which editor to creat and return depenedent on the column number
     if(index.column() == 0 || index.column() == 1)
     {
         QLineEdit *editor = new QLineEdit(parent);
@@ -64,16 +66,13 @@ void officerDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 
 void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    if (index.column() == 0 || index.column() == 1)
+    if (index.column() == 0 || index.column() == 1)         //data from the line edits is assigned to a student object and that object is then emitted
     {
         CurrentStudent student;
-       QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
-       QString value = lineEdit->text();
-       model->setData(index,value, Qt::EditRole);
-
+        QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
+        QString value = lineEdit->text();
+        model->setData(index,value, Qt::EditRole);
         QVector<QString> studentData(2);
-
-
        //a vector of QStrings saves data at specific cells in the tableView
         for (int i = 0; i < 2; ++i)
         {
@@ -92,9 +91,9 @@ void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
         emit studentNameEdited(student, index.row());
 
     }
-    else if (index.column() == 2 || index.column() == 3 || index.column() == 4)
+    else if (index.column() == 2 || index.column() == 3 || index.column() == 4)     //data from spin boxes
     {
-         CurrentStudent student;
+        CurrentStudent student;
         QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
         spinBox->interpretText();
         int value = spinBox->value();
@@ -111,13 +110,15 @@ void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
         int studentContributions = studentDataInt[0];
         int studentServProjects = studentDataInt[1];
         int studentMeetings = studentDataInt[2];
+
         student.setContributions(studentContributions);
         student.setServProjects(studentServProjects);
         student.setAttendedMeetings(studentMeetings);
+
         qDebug() << "SPINBOX: " << student.getContributions() << " " << student.getServProjects() << " " << student.getAttendedMeetings();
         emit studentSpinEdited(student, index.row());
     }
-    else if (index.column() == 5)
+    else if (index.column() == 5)                       //data from combo box
     {
         CurrentStudent student;
         QComboBox *comboBox = static_cast<QComboBox*>(editor);

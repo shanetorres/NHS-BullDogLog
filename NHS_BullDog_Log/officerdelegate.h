@@ -34,15 +34,15 @@ public:
 
 signals:
     void studentNameEdited(CurrentStudent, int) const;
+
     void studentSpinEdited(CurrentStudent, int) const;
+
     void studentComboEdited(CurrentStudent, int) const;
 
 
 public slots:
 
 private:
-
-   const int totalData = 5;
    std::vector<QString> Items;
 
 };

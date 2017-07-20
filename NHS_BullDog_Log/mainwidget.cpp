@@ -18,37 +18,28 @@ mainWidget::mainWidget(QWidget *parent) :
 
 
 
+
     /*----------------------------OFFICER RECORDS----------------------------*/
 
     /*<OVERALL PAGE>*/
 
-    //instantiating the custom delegate and connecting a signal to the studentEdited slot to allow for data to be transferred
+    //instantiating the custom delegate
     currentStudentsDelegate = new officerDelegate(this);
-//    spinDelegate = new OfficerSpinDelegate(this);
-//    comboDelegate =new OfficerComboDelegate(this);
 
-    //connecting all delegates to desired slots on the mainwidget
+    //connecting all delegate signals to desired slots on the mainwidget
     connect(currentStudentsDelegate, SIGNAL(studentNameEdited(CurrentStudent, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int)));
     connect(currentStudentsDelegate, SIGNAL(studentSpinEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
     connect(currentStudentsDelegate, SIGNAL(studentComboEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
-//    connect(comboDelegate, SIGNAL(studentComboBoxEdited(CurrentStudent,int)), this, SLOT(on_studentEdited(CurrentStudent,int)));
+
 
     //creating the model for all current students and setting resizing parameters for the view
     currentStudentsModel = new QStandardItemModel(this);
+    populateCurrentStudentsModel();          //reading data from file into the table
     ui->currentTableView->setModel(currentStudentsModel);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
-    //assigning delegates to specific columns
-//    ui->currentTableView->setItemDelegateForColumn(0, currentStudentsDelegate);
-//    ui->currentTableView->setItemDelegateForColumn(1, currentStudentsDelegate);
-//    for (int i = 2; i < 5; i++)
-//    {
-//        ui->currentTableView->setItemDelegateForColumn(i, spinDelegate);
-//    }
-//    ui->currentTableView->setItemDelegateForColumn(5, comboDelegate);
+    //assigning the custom delegate to the view
     ui->currentTableView->setItemDelegate(currentStudentsDelegate);
-
-
 
     //setting the header text of the model
     currentStudentsModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
@@ -141,17 +132,19 @@ void mainWidget::enableButtons()
 }
 
 
-//this slot assigns the emitted student to a student in the currentStudents vector
+/*----OVERALL TAB DELEGATE SLOTS----*/
 
+
+//assings data from line edits to an object in the vector based on the row number
 void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
 {
     currentStudents[row].setFirstName(student.getFirstName());
     currentStudents[row].setLastName(student.getLastName());
-//    currentStudents[row].setInductionAttendance(student.getInductionAttendance());
     qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
-//    writeToFile();
+    writeToFile();
 }
 
+//assings data from the spin boxes to an object in the vector
 void mainWidget::on_studentSpinEdited(CurrentStudent student, int row)
 {
     currentStudents[row].setContributions(student.getContributions());
@@ -160,31 +153,93 @@ void mainWidget::on_studentSpinEdited(CurrentStudent student, int row)
     qDebug() << "Student Data AFTER SPIN: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName() << ", "
              << currentStudents[row].getContributions() << ", " << currentStudents[row].getServProjects()
              << ", " << currentStudents[row].getAttendedMeetings() << ", " << currentStudents[row].getInductionAttendance();
+    writeToFile();
 }
 
+//assings data from the combo box to an object in the vector
 void mainWidget::on_studentComboEdited(CurrentStudent student, int row)
 {
     currentStudents[row].setInductionAttendance(student.getInductionAttendance());
     qDebug() << "ATTENDANCE: " << currentStudents[row].getInductionAttendance();
+    writeToFile();
 }
 
+/*----END OVERALL TAB DELEGATE SLOTS----*/
 
+//writes all objects in the current student vector to a file
 void mainWidget::writeToFile()
 {
     QString filename = "currentstudents.csv";
     QFile file(filename);
-    file.open(QIODevice::ReadWrite);
+    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QTextStream stream(&file);
     for (int i = 0; i < currentStudents.size(); i++)
     {
-        stream << currentStudents[i].getFirstName() << ", " << currentStudents[i].getLastName() << ", "
-                                                   << currentStudents[i].getContributions() << ", " << currentStudents[i].getServProjects()
-                                                   << ", " << currentStudents[i].getAttendedMeetings() << ", " << currentStudents[i].getInductionAttendance() << endl;
+        //not the best solution, but eliminating a bug that sets these values to random numbers if not entered
+        if (currentStudents[i].getContributions() > 100 | currentStudents[i].getContributions() < 0)
+        {
+            currentStudents[i].setContributions(0);
+        }
+        if (currentStudents[i].getServProjects() > 100 | currentStudents[i].getServProjects() < 0)
+        {
+            currentStudents[i].setServProjects(0);
+        }
+
+        stream << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
+                                                   << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
+                                                   << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," << endl;
     }
 }
 
 
+//populating the current students table with information from the data file
+void mainWidget::populateCurrentStudentsModel()
+{
+    /*ISSUES:
+        - need a way to not let certain input from the file be uploaded into the table, i.e. a string into a spinbox
+        - need a try catch block when a new student is passed into the vector as to prevent an out of bounds error
+    */
 
+    QString filename = "currentstudents.csv";
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+
+        int lineindex = 0;                     // file line counter
+        QTextStream input(&file);                 // read to text stream
+    if (file.size() < 10)
+    {
+        qDebug() << "FILE IS EMPTY";
+
+    }
+    else
+    {
+        while (!input.atEnd()) {
+        QVector<QString> newRecord;
+            // read one line from textstream(separated by "\n")
+            QString fileLine = input.readLine();
+
+            // parse the read line into separate pieces(tokens) with "," as the delimiter
+            QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
+
+            // load parsed data to model accordingly
+            for (int i = 0; i < lineToken.size(); i++) {
+
+                QString value = lineToken.at(i);
+                newRecord.push_back(value);
+                QStandardItem *item = new QStandardItem(value);
+                currentStudentsModel->setItem(lineindex, i, item);
+            }
+            //creating a student object with the information parsed from the file
+            CurrentStudent student(newRecord[0], newRecord[1], newRecord[2].toInt(), newRecord[3].toInt(), newRecord[4].toInt(), newRecord[5].toUInt());
+            currentStudents.push_back(student);
+            qDebug() << "POPULATE STUDENT: " << student.getFirstName() << ", " << student.getLastName() << ", " << student.getContributions()
+                     << ", " << student.getServProjects() << ", " << student.getAttendedMeetings() << ", " << student.getInductionAttendance();
+            lineindex++;
+        }
+}
+
+
+}
 
 
 
