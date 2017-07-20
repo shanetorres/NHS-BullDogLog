@@ -2,12 +2,7 @@
 
 CurrentStudent::CurrentStudent()
 {
-//    setFirstName(" ");
-//    setLastName(" ");
-//    setContributions(0);
-//    setServProjects(0);
-//    setAttendedMeetings(0);
-//    setInductionAttendance(false);
+
 }
 
 //default constructor assigns all inputted data to data members of the class via the set functions
@@ -19,7 +14,6 @@ CurrentStudent::CurrentStudent(QString first, QString last, int cont, int serv, 
     setServProjects(serv);
     setAttendedMeetings(meetings);
     setInductionAttendance(induct);
-
 }
 
 void CurrentStudent::setFirstName(QString first) { firstName = first; }
