@@ -36,8 +36,6 @@ QWidget *officerDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
         }
         return editor;
     }
-
-
 }
 
 void officerDelegate::setEditorData(QWidget *editor, const QModelIndex &index)

@@ -39,3 +39,15 @@ int CurrentStudent:: getAttendedMeetings() { return attendedMeetings; }
 void CurrentStudent::setInductionAttendance(bool induct) { inductionAttend = induct; }
 
 bool CurrentStudent::getInductionAttendance() { return inductionAttend; }
+
+void CurrentStudent::setStudentEvent(QString event) { studentEvents.push_back(event); }
+
+QString CurrentStudent::getStudentEvent(int i) { return studentEvents[i]; }
+
+void CurrentStudent::setEventVector(QVector<QString> events)
+{
+    for (int i = 0; i < events.size(); i++)
+    {
+        studentEvents[i] = events[i];
+    }
+}

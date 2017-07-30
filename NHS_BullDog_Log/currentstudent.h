@@ -2,6 +2,7 @@
 #define CURRENTSTUDENT_H
 #include <QString>
 #include "officerdelegate.h"
+#include <QVector>
 
 class OfficerDelegate;
 
@@ -22,6 +23,9 @@ public:
     int getAttendedMeetings();
     void setInductionAttendance(bool);
     bool getInductionAttendance();
+    void setStudentEvent(QString);
+    QString getStudentEvent(int);
+    void setEventVector(QVector<QString>);
 
 
 private:
@@ -31,6 +35,7 @@ private:
     int servProjects;
     int attendedMeetings;
     bool inductionAttend;
+    QVector<QString> studentEvents;
 };
 
 #endif // CURRENTSTUDENT_H
