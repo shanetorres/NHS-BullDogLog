@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include "officerdelegate.h"
+#include "contributiondelegate.h"
 #include "currentstudent.h"
+#include "addcontributiondialog.h"
 #include <vector>
 #include <QFile>
 #include <QTextStream>
@@ -24,11 +26,19 @@ public:
 
     void enableButtons();
 
+    void disableButtons();
+
     void officerDeleteRecord();
 
     void writeToFile();
 
+    //contributions page
+
     void populateCurrentStudentsModel();
+
+    void populateContributionsModel();
+
+    void initializeContModel();
 
 private slots:
 
@@ -37,6 +47,8 @@ private slots:
     void on_officerButton_clicked();
 
     void on_quitButton_clicked();
+
+    /*~OVERALL TAB~*/
 
     void on_offMenuButton_clicked();
 
@@ -52,12 +64,33 @@ private slots:
 
     void on_studentComboEdited(CurrentStudent, int);
 
+    /*~CONTRIBUTIONS TAB~*/
+
+    void on_contMenuButton_clicked();
+
+    void on_contAddEventButton_clicked();
+
+    void on_eventAdded(QString);
+
+    void on_contDeleteEventButton_clicked();
+
+    void on_cancelClicked();
+
+    void on_eventEdited(QString, int, int);
+
 private:
     Ui::mainWidget *ui;
+    /*~OVERALL TAB~*/
     QStandardItemModel* currentStudentsModel;
     const int currentStudentCols = 6;
     officerDelegate *currentStudentsDelegate;
     std::vector<CurrentStudent> currentStudents;
     int totalStudents;
+    /*~CONTRIBUTIONS TAB~*/
+    QStandardItemModel* contributionsModel;
+    AddContributionDialog* addDialog;
+    int contCols;
+    ContributionDelegate *contributionDelegate;
+    QVector<QString> events;
 };
 #endif // MAINWIDGET_H

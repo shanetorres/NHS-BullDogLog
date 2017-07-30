@@ -27,13 +27,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwidget.cpp \
     officerdelegate.cpp \
-    currentstudent.cpp
+    currentstudent.cpp \
+    addcontributiondialog.cpp \
+    contributiondelegate.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
-    currentstudent.h
+    currentstudent.h \
+    addcontributiondialog.h \
+    contributiondelegate.h
 
-FORMS    += mainwidget.ui
+FORMS    += mainwidget.ui \
+    addcontributiondialog.ui
 
 RESOURCES += \
     pictures.qrc
