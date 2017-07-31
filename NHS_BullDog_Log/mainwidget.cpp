@@ -365,6 +365,8 @@ void mainWidget::on_eventAdded(QString eventName)
     {
         qDebug() << "STUDENT EVENT #" << i << ": " << currentStudents[0].getStudentEvent(i);
     }
+    eventNames.push_back(eventName);
+    writeToContributionsFile();
 }
 
 //deletes the selected column
@@ -394,6 +396,7 @@ void mainWidget::on_eventEdited(QString event, int row, int column)
     {
         qDebug() << "CURRENT EVENTS #" << j << ": " << currentStudents[row].getStudentEvent(j);
     }
+    writeToContributionsFile();
 }
 
 
@@ -408,7 +411,36 @@ void mainWidget::populateContributionsModel()
         QList<QStandardItem*> fullName;
         fullName.append(new QStandardItem(currentStudents[i].getFirstName()));
         fullName.append(new QStandardItem(currentStudents[i].getLastName()));
+
+        /*NOT WORKING, CAUSES INDEX OUT OF RANGE ERROR*/
+//        for (int j = 0; i < eventNames.size(); j++)
+//        {
+//            fullName.append(new QStandardItem(currentStudents[i].getStudentEvent(j)));
+//        }
+
         contributionsModel->appendRow(fullName);
+    }
+}
+
+//writes the event names as well as each student's contribution to a file
+void mainWidget::writeToContributionsFile()
+{
+    QString filename = "contributions.csv";
+    QFile file(filename);
+    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
+    QTextStream stream(&file);
+    for (int i = 0; i < eventNames.size(); i++)
+    {
+        stream << eventNames[i] << ",";
+    }
+    stream << endl;
+    for (int j = 0; j < currentStudents.size(); j++)
+    {
+        for (int k = 0; k < (contributionsModel->columnCount() - 2); k++)
+        {
+            stream << currentStudents[j].getStudentEvent(k) << ",";
+        }
+        stream << endl;
     }
 }
 

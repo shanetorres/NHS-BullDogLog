@@ -40,6 +40,8 @@ public:
 
     void initializeContModel();
 
+    void writeToContributionsFile();
+
 private slots:
 
     void on_adminButton_clicked();
@@ -91,6 +93,6 @@ private:
     AddContributionDialog* addDialog;
     int contCols;
     ContributionDelegate *contributionDelegate;
-    QVector<QString> events;
+    QVector<QString> eventNames;
 };
 #endif // MAINWIDGET_H
