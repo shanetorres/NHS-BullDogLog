@@ -34,8 +34,9 @@ SOURCES += main.cpp\
 HEADERS  += mainwidget.h \
     officerdelegate.h \
     currentstudent.h \
+    contributiondelegate.h \
     addcontributiondialog.h \
-    contributiondelegate.h
+
 
 FORMS    += mainwidget.ui \
     addcontributiondialog.ui
@@ -44,4 +45,8 @@ RESOURCES += \
     pictures.qrc
 
 DISTFILES += \
-    data/currentstudents.csv
+    data/currentstudents.csv \
+    data/contributions.csv
+
+
+
