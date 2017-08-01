@@ -26,7 +26,6 @@ mainWidget::mainWidget(QWidget *parent) :
             - need validation test or try catch block to eliminate problematic records when reading from a file
             - need a way to enable buttons if the close (x) button is clicked on the add event dialog
             - events need to be deleted from every students event vector when the delete event button is clicked
-            - find a way to make edits between overall and contributions page synchronous without clearing all events from the model
     */
 
     /*<OVERALL PAGE>*/
@@ -70,9 +69,11 @@ mainWidget::mainWidget(QWidget *parent) :
     connect(addDialog, SIGNAL(cancelClicked()), this, SLOT(on_cancelClicked()));
     connect(contributionDelegate, SIGNAL(eventEdited(QString,int,int)), this, SLOT(on_eventEdited(QString,int,int)));
 
-    populateContributionsModel();
+
+
     ui->contributionsTableView->setModel(contributionsModel);
-    initializeContModel();
+    initializeContModel();              //sets the header text for the first two columns as well as resizing properties
+    updateContributionsModel();
     ui->contributionsTableView->setItemDelegate(contributionDelegate);
 
     //manual column counter
@@ -105,12 +106,16 @@ void mainWidget::on_offAddStudentButton_clicked()
    QList<QStandardItem *> newRecord;
    for (int i = 0; i < currentStudentCols; i++)
    {
-       newRecord.append(new QStandardItem(""));
+       newRecord.append(new QStandardItem(" "));
    }
    currentStudentsModel->appendRow(newRecord);
 
    //creating a currentstudent object and pushing it into a vector everytime a row is added
    CurrentStudent student;
+   for (int j = 0; j < contributionsModel->columnCount()-2; j++)
+   {
+       student.setStudentEvent(" ");
+   }
    currentStudents.push_back(student);
 
 
@@ -119,6 +124,8 @@ void mainWidget::on_offAddStudentButton_clicked()
    {
        qDebug() << "STUDENT " << i << "NAME: " << currentStudents[i].getFirstName();
    }
+
+
 }
 
 void mainWidget::on_offDeleteStudentButton_clicked()
@@ -149,7 +156,7 @@ void mainWidget::officerDeleteRecord()
     currentStudentsModel->removeRows(ui->currentTableView->currentIndex().row(),1);
     enableButtons();
     writeToFile();
-    populateContributionsModel();
+    updateContributionsModel();
 }
 
 //enables buttons on officer page for clicking
@@ -183,7 +190,8 @@ void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
     currentStudents[row].setFirstName(student.getFirstName());
     currentStudents[row].setLastName(student.getLastName());
     qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
-    populateContributionsModel();
+    updateContributionsModel();
+
     writeToFile();
 }
 
@@ -345,7 +353,7 @@ void mainWidget::on_cancelClicked()
 void mainWidget::on_eventAdded(QString eventName)
 {
     QList<QStandardItem *> newRecord;
-
+    eventNames.push_back(eventName);
     addDialog->close();
     enableButtons();
 
@@ -359,24 +367,25 @@ void mainWidget::on_eventAdded(QString eventName)
 
     //the blank event column is appended to the model
     contributionsModel->appendColumn(newRecord);
-    contributionsModel->setHorizontalHeaderItem(contCols, new QStandardItem(eventName));
+    contributionsModel->setHorizontalHeaderItem(eventNames.size() + 1, new QStandardItem(eventName));
     contCols++;
-    for (int i = 0; i < (contCols - 2); i++)
-    {
-        qDebug() << "STUDENT EVENT #" << i << ": " << currentStudents[0].getStudentEvent(i);
-    }
-    eventNames.push_back(eventName);
-    writeToContributionsFile();
+
+
+//    writeToContributionsFile();
 }
 
 //deletes the selected column
 void mainWidget::on_contDeleteEventButton_clicked()
 {
-    if (contCols > 2 && ui->contributionsTableView->currentIndex().column() != 0 && ui->contributionsTableView->currentIndex().column() != 1 )
+    qDebug() << "Before " << eventNames.size();
+    if (ui->contributionsTableView->currentIndex().column() != 0 && ui->contributionsTableView->currentIndex().column() != 1 )
     {
     contributionsModel->removeColumns(ui->contributionsTableView->currentIndex().column(),1);
     contCols--;
     //*ISSUE*: needs code to remove the event from every students event vector
+    eventNames.erase(eventNames.begin()+ui->contributionsTableView->currentIndex().column());
+    qDebug() << "After" << eventNames.size();
+    writeToContributionsFile();
     }
 }
 
@@ -388,22 +397,19 @@ void mainWidget::on_eventEdited(QString event, int row, int column)
     //the current student vector is copied to the events vector so it can be updated with the edit
     for (int i = 0; i < (contributionsModel->columnCount() - 2); i++)
     {
-        events.push_back(currentStudents[row].getStudentEvent(i));
+        events = currentStudents[row].getEventVector();
     }
     events[column - 2] = event;             //the edited event is added to the events vector at the index of the column
     currentStudents[row].setEventVector(events);        //copy method is called that updates the student vector with the events vector
-    for (int j = 0; j < events.size(); j++)
-    {
-        qDebug() << "CURRENT EVENTS #" << j << ": " << currentStudents[row].getStudentEvent(j);
-    }
+
     writeToContributionsFile();
 }
 
 
-//populates the contributions model with data from the overall tab  everytime it is updates
-void mainWidget::populateContributionsModel()
+//populates the contributions model with data from the overall tab everytime it is updated
+void mainWidget::updateContributionsModel()
 {
-    /*ISSUE: clear method does not work properly, it clears all events when a user is edited on another tab, needs fixing*/
+    qDebug() << "MOFO SIZE" << currentStudents.size();
     contributionsModel->clear();
     initializeContModel();
     for (int i = 0; i < currentStudents.size(); i++)
@@ -412,23 +418,29 @@ void mainWidget::populateContributionsModel()
         fullName.append(new QStandardItem(currentStudents[i].getFirstName()));
         fullName.append(new QStandardItem(currentStudents[i].getLastName()));
 
-        /*NOT WORKING, CAUSES INDEX OUT OF RANGE ERROR*/
-//        for (int j = 0; i < eventNames.size(); j++)
-//        {
-//            fullName.append(new QStandardItem(currentStudents[i].getStudentEvent(j)));
-//        }
+        for (int j = 0; j < eventNames.size(); j++)
+        {
+            contributionsModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
+            fullName.append(new QStandardItem(currentStudents[i].getStudentEvent(j)));
+        }
 
         contributionsModel->appendRow(fullName);
     }
+
 }
 
 //writes the event names as well as each student's contribution to a file
 void mainWidget::writeToContributionsFile()
 {
+    qDebug() << "EVENT SIZE" << eventNames.size() << currentStudents.size();
     QString filename = "contributions.csv";
     QFile file(filename);
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QTextStream stream(&file);
+//    for (int k = 0; k < eventNames.size(); k++)
+//    {
+//        qDebug() << "YO EVENT #" << k << ": " << currentStudents[0].getStudentEvent(k) << ",";
+//    }
     for (int i = 0; i < eventNames.size(); i++)
     {
         stream << eventNames[i] << ",";
@@ -436,11 +448,75 @@ void mainWidget::writeToContributionsFile()
     stream << endl;
     for (int j = 0; j < currentStudents.size(); j++)
     {
-        for (int k = 0; k < (contributionsModel->columnCount() - 2); k++)
+        for (int k = 0; k < eventNames.size(); k++)
         {
             stream << currentStudents[j].getStudentEvent(k) << ",";
         }
         stream << endl;
+    }
+}
+
+//NOT WORKING
+//populates the contributions tab with current students names and event data from contributions.csv
+void mainWidget::populateContributionsModel()
+{
+    contributionsModel->clear();
+    initializeContModel();
+    //sets the data for the first two columns to each student's first and last name
+    for (int i = 0; i < currentStudents.size(); i++)
+    {
+        QList<QStandardItem*> fullName;
+        fullName.append(new QStandardItem(currentStudents[i].getFirstName()));
+        fullName.append(new QStandardItem(currentStudents[i].getLastName()));
+        contributionsModel->appendRow(fullName);
+    }
+
+    QString filename = "contributions.csv";
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    int lineindex = 0;
+    QTextStream input(&file);
+    QVector<QString> values;
+
+    while (!input.atEnd())
+    {
+        QString fileLine = input.readLine();
+        QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
+
+        if (lineindex == 0)             //gets the first line of the file, which is the names of the e evnts
+        {
+            for (int i = 0; i < lineToken.size(); i++)
+            {
+                QString value = lineToken.at(i);
+                eventNames.push_back(value);
+
+                contributionsModel->setHorizontalHeaderItem(i+2, new QStandardItem(value));
+
+                qDebug() << "EVENT NAMES: " << eventNames[i];
+
+             }
+
+        lineindex++;
+        }
+        else if(lineindex > 0)          //gets every other line afterwards, which is the student event data
+        {
+            for (int j = 0; j < lineToken.size(); j++)
+            {
+                QString value = lineToken.at(j);
+//                values.push_back(value);
+                contributionsModel->setItem(lineindex - 1, j + 2, new QStandardItem(value));
+
+                currentStudents[lineindex-1].setStudentEvent(value);
+
+            }
+
+//                            QString value = lineToken.at(0);
+//                            values.push_back(value);
+//            currentStudents[0].setStudentEvent(value);
+//            contributionsModel->setItem(0, 2, new QStandardItem(value));
+            lineindex++;
+        }
+
     }
 }
 

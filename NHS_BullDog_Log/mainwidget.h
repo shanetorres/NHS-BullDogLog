@@ -36,11 +36,13 @@ public:
 
     void populateCurrentStudentsModel();
 
-    void populateContributionsModel();
+    void updateContributionsModel();
 
     void initializeContModel();
 
     void writeToContributionsFile();
+
+    void populateContributionsModel();
 
 private slots:
 
