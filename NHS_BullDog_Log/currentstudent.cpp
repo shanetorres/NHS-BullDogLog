@@ -46,8 +46,18 @@ QString CurrentStudent::getStudentEvent(int i) { return studentEvents[i]; }
 
 void CurrentStudent::setEventVector(QVector<QString> events)
 {
+    studentEvents.clear();
+    for (int i = 0; i < events.size(); i++)
+    {
+        studentEvents.push_back(" ");
+    }
     for (int i = 0; i < events.size(); i++)
     {
         studentEvents[i] = events[i];
     }
+}
+
+QVector<QString> CurrentStudent::getEventVector()
+{
+    return studentEvents;
 }

@@ -26,6 +26,7 @@ public:
     void setStudentEvent(QString);
     QString getStudentEvent(int);
     void setEventVector(QVector<QString>);
+    QVector<QString> getEventVector();
 
 
 private:
