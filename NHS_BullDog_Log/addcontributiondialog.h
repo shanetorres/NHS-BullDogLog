@@ -14,6 +14,7 @@ class AddContributionDialog : public QDialog
 public:
     explicit AddContributionDialog(QWidget *parent = 0);
     ~AddContributionDialog();
+    void AddContributionDialog::reject();
 
 private slots:
     void on_okButton_clicked();
