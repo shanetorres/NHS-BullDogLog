@@ -22,11 +22,6 @@ mainWidget::mainWidget(QWidget *parent) :
 
     /*----------------------------OFFICER RECORDS----------------------------*/
 
-    /*ISSUES:
-            - need validation test or try catch block to eliminate problematic records when reading from a file
-            - need a way to enable buttons if the close (x) button is clicked on the add event dialog
-            - events need to be deleted from every students event vector when the delete event button is clicked
-    */
 
     /*<OVERALL PAGE>*/
 
@@ -73,7 +68,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
     ui->contributionsTableView->setModel(contributionsModel);
     initializeContModel();              //sets the header text for the first two columns as well as resizing properties
-    updateContributionsModel();
+    populateContributionsModel();
     ui->contributionsTableView->setItemDelegate(contributionDelegate);
 
     //manual column counter
@@ -124,7 +119,7 @@ void mainWidget::on_offAddStudentButton_clicked()
    {
        qDebug() << "STUDENT " << i << "NAME: " << currentStudents[i].getFirstName();
    }
-
+    writeToContributionsFile();
 
 }
 
@@ -239,6 +234,10 @@ void mainWidget::writeToFile()
         {
             currentStudents[i].setAttendedMeetings(0);
         }
+        if (currentStudents[i].getInductionAttendance() > 1)
+        {
+            currentStudents[i].setInductionAttendance(false);
+        }
 
         stream << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
                                                    << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
@@ -284,10 +283,44 @@ void mainWidget::populateCurrentStudentsModel()
                 QStandardItem *item = new QStandardItem(value);
                 currentStudentsModel->setItem(lineindex, i, item);
             }
+               //this whole block of if statements is a validation test that eliminates faulty records that could cause out of bounds errors
+               if (newRecord.size() > 0)
+               {
 
+                if (newRecord[0].size() == 0 || newRecord[0] == "0" || newRecord[0] >= 48 && newRecord[0] <= 57)
+                {
+                    qDebug() << "IN";
+                    newRecord.clear();
+                    newRecord.push_back(" ");
+                    newRecord.push_back(" ");
+                    newRecord.push_back("0");
+                    newRecord.push_back("0");
+                    newRecord.push_back("0");
+                    newRecord.push_back("No");
+                    for (int j = 0; j < lineToken.size(); j++)
+                    {
+                        currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                    }
 
-                //creating a student object with the information parsed from the file
+                }
+                if (newRecord[1].size() == 0 || newRecord[1] == "0" || newRecord[1] >= 48 && newRecord[1] <= 57)
+                {
+                    qDebug() << "IN 2";
+                    newRecord.clear();
+                    newRecord.push_back(" ");
+                    newRecord.push_back(" ");
+                    newRecord.push_back("0");
+                    newRecord.push_back("0");
+                    newRecord.push_back("0");
+                    newRecord.push_back("No");
+                    for (int j = 0; j < lineToken.size(); j++)
+                    {
+                        currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                    }
+                }
+               }
 
+               //creating a student object with the information parsed from the file
                 CurrentStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toInt(), newRecord.at(3).toInt(), newRecord.at(4).toInt(), newRecord.at(5).toUInt());
                 currentStudents.push_back(student);
 
@@ -370,21 +403,24 @@ void mainWidget::on_eventAdded(QString eventName)
     contributionsModel->setHorizontalHeaderItem(eventNames.size() + 1, new QStandardItem(eventName));
     contCols++;
 
-
-//    writeToContributionsFile();
+    writeToContributionsFile();
 }
 
 //deletes the selected column
 void mainWidget::on_contDeleteEventButton_clicked()
 {
-    qDebug() << "Before " << eventNames.size();
     if (ui->contributionsTableView->currentIndex().column() != 0 && ui->contributionsTableView->currentIndex().column() != 1 )
     {
     contributionsModel->removeColumns(ui->contributionsTableView->currentIndex().column(),1);
     contCols--;
-    //*ISSUE*: needs code to remove the event from every students event vector
-    eventNames.erase(eventNames.begin()+ui->contributionsTableView->currentIndex().column());
-    qDebug() << "After" << eventNames.size();
+    eventNames.erase(eventNames.begin()+ui->contributionsTableView->currentIndex().column() - 1);   //removes the name of the deleted event from the names vector
+    //copies the current currentStudents event vector into a temporary one, deletes the specified event, and replaces the currentStudents vector with the updated one
+    for (int i = 0; i < currentStudents.size(); i++)
+    {
+        QVector<QString> tempEvents = currentStudents[i].getEventVector();
+        tempEvents.erase(tempEvents.begin()+ui->contributionsTableView->currentIndex().column() - 1);
+        currentStudents[i].setEventVector(tempEvents);
+    }
     writeToContributionsFile();
     }
 }
@@ -409,9 +445,9 @@ void mainWidget::on_eventEdited(QString event, int row, int column)
 //populates the contributions model with data from the overall tab everytime it is updated
 void mainWidget::updateContributionsModel()
 {
-    qDebug() << "MOFO SIZE" << currentStudents.size();
     contributionsModel->clear();
     initializeContModel();
+
     for (int i = 0; i < currentStudents.size(); i++)
     {
         QList<QStandardItem*> fullName;
@@ -426,7 +462,7 @@ void mainWidget::updateContributionsModel()
 
         contributionsModel->appendRow(fullName);
     }
-
+    writeToContributionsFile();
 }
 
 //writes the event names as well as each student's contribution to a file
@@ -437,10 +473,7 @@ void mainWidget::writeToContributionsFile()
     QFile file(filename);
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QTextStream stream(&file);
-//    for (int k = 0; k < eventNames.size(); k++)
-//    {
-//        qDebug() << "YO EVENT #" << k << ": " << currentStudents[0].getStudentEvent(k) << ",";
-//    }
+
     for (int i = 0; i < eventNames.size(); i++)
     {
         stream << eventNames[i] << ",";
@@ -456,7 +489,7 @@ void mainWidget::writeToContributionsFile()
     }
 }
 
-//NOT WORKING
+
 //populates the contributions tab with current students names and event data from contributions.csv
 void mainWidget::populateContributionsModel()
 {
@@ -483,7 +516,7 @@ void mainWidget::populateContributionsModel()
         QString fileLine = input.readLine();
         QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
 
-        if (lineindex == 0)             //gets the first line of the file, which is the names of the e evnts
+        if (lineindex == 0)             //gets the first line of the file, which is the names of the events
         {
             for (int i = 0; i < lineToken.size(); i++)
             {
@@ -498,25 +531,16 @@ void mainWidget::populateContributionsModel()
 
         lineindex++;
         }
-        else if(lineindex > 0)          //gets every other line afterwards, which is the student event data
+        else if(lineindex > 0 && lineindex <= currentStudents.size())          //gets every other line afterwards, which is the student event data
         {
             for (int j = 0; j < lineToken.size(); j++)
             {
                 QString value = lineToken.at(j);
-//                values.push_back(value);
                 contributionsModel->setItem(lineindex - 1, j + 2, new QStandardItem(value));
-
                 currentStudents[lineindex-1].setStudentEvent(value);
-
             }
-
-//                            QString value = lineToken.at(0);
-//                            values.push_back(value);
-//            currentStudents[0].setStudentEvent(value);
-//            contributionsModel->setItem(0, 2, new QStandardItem(value));
             lineindex++;
         }
-
     }
 }
 

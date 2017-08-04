@@ -1,5 +1,6 @@
 #include "addcontributiondialog.h"
 #include "ui_addcontributiondialog.h"
+#include <QMessageBox>
 
 AddContributionDialog::AddContributionDialog(QWidget *parent) :
     QDialog(parent),
@@ -11,6 +12,12 @@ AddContributionDialog::AddContributionDialog(QWidget *parent) :
 AddContributionDialog::~AddContributionDialog()
 {
     delete ui;
+}
+
+void AddContributionDialog::reject()
+{
+    this->hide();
+    emit cancelClicked();
 }
 
 void AddContributionDialog::on_okButton_clicked()
