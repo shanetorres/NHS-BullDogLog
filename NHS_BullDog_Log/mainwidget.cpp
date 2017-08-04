@@ -16,6 +16,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
     /*----------------------------ADMIN RECORDS------------------------------*/
 
+    //git is cool
 
 
 
@@ -544,3 +545,10 @@ void mainWidget::populateContributionsModel()
     }
 }
 
+
+
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~ADMIN RECORDS BEGIN~~~~~~~~~~~~~~~~~*/
