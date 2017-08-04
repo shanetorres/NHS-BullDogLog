@@ -545,3 +545,10 @@ void mainWidget::populateContributionsModel()
     }
 }
 
+
+
+
+
+
+
+/*~~~~~~~~~~~~~~~~~~~ADMIN RECORDS BEGIN~~~~~~~~~~~~~~~~~*/
