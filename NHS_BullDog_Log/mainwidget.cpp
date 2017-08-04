@@ -16,6 +16,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
     /*----------------------------ADMIN RECORDS------------------------------*/
 
+    //git is cool
 
 
 
