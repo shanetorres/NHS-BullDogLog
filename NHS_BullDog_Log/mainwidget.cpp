@@ -7,6 +7,7 @@
 #include <iostream>
 #include <QModelIndex>
 #include <stdexcept>
+#include <QStandardItem>
 
 mainWidget::mainWidget(QWidget *parent) :
     QWidget(parent),
@@ -16,7 +17,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
     /*----------------------------ADMIN RECORDS------------------------------*/
 
-    //git is cool
+
 
 
 
@@ -250,80 +251,78 @@ void mainWidget::writeToFile()
 //populating the current students table with information from the data file
 void mainWidget::populateCurrentStudentsModel()
 {
-    /*ISSUES:
-        - need a way to not let certain input from the file be uploaded into the table, i.e. a string into a spinbox
-        - need a try catch block when a new student is passed into the vector as to prevent an out of bounds error
-    */
-
     QString filename = "currentstudents.csv";
     QFile file(filename);
-    file.open(QIODevice::ReadOnly);
 
+    if(file.open(QIODevice::ReadOnly))
+    {
         int lineindex = 0;                     // file line counter
         QTextStream input(&file);                 // read to text stream
-    if (file.size() < 10)
-    {
-        qDebug() << "FILE IS EMPTY";
+        if (file.size() < 10)
+        {
+            qDebug() << "FILE IS EMPTY";
 
-    }
-    else
-    {
-        while (!input.atEnd()) {
-        std::vector<QString> newRecord;
-            // read one line from textstream(separated by "\n")
-            QString fileLine = input.readLine();
+        }
+        else
+        {
+            while (!input.atEnd())
+            {
+                std::vector<QString> newRecord;
+                // read one line from textstream(separated by "\n")
+                QString fileLine = input.readLine();
 
-            // parse the read line into separate pieces(tokens) with "," as the delimiter
-            QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
+                // parse the read line into separate pieces(tokens) with "," as the delimiter
+                QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
 
-            // load parsed data to model accordingly
-            try {
-            for (int i = 0; i < lineToken.size(); i++) {
-                QString value = lineToken.at(i);
-                newRecord.push_back(value);
-                QStandardItem *item = new QStandardItem(value);
-                currentStudentsModel->setItem(lineindex, i, item);
-            }
-               //this whole block of if statements is a validation test that eliminates faulty records that could cause out of bounds errors
-               if (newRecord.size() > 0)
-               {
-
-                if (newRecord[0].size() == 0 || newRecord[0] == "0" || newRecord[0] >= 48 && newRecord[0] <= 57)
-                {
-                    qDebug() << "IN";
-                    newRecord.clear();
-                    newRecord.push_back(" ");
-                    newRecord.push_back(" ");
-                    newRecord.push_back("0");
-                    newRecord.push_back("0");
-                    newRecord.push_back("0");
-                    newRecord.push_back("No");
-                    for (int j = 0; j < lineToken.size(); j++)
+                // load parsed data to model accordingly
+                try {
+                    for (int i = 0; i < lineToken.size(); i++)
                     {
-                        currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                        QString value = lineToken.at(i);
+                        newRecord.push_back(value);
+                        QStandardItem *item = new QStandardItem(value);
+                        currentStudentsModel->setItem(lineindex, i, item);
                     }
-
-                }
-                if (newRecord[1].size() == 0 || newRecord[1] == "0" || newRecord[1] >= 48 && newRecord[1] <= 57)
-                {
-                    qDebug() << "IN 2";
-                    newRecord.clear();
-                    newRecord.push_back(" ");
-                    newRecord.push_back(" ");
-                    newRecord.push_back("0");
-                    newRecord.push_back("0");
-                    newRecord.push_back("0");
-                    newRecord.push_back("No");
-                    for (int j = 0; j < lineToken.size(); j++)
+                    //this whole block of if statements is a validation test that eliminates faulty records that could cause out of bounds errors
+                    if (newRecord.size() > 0)
                     {
-                        currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
-                    }
-                }
-               }
 
-               //creating a student object with the information parsed from the file
-                CurrentStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toInt(), newRecord.at(3).toInt(), newRecord.at(4).toInt(), newRecord.at(5).toUInt());
-                currentStudents.push_back(student);
+                        if (newRecord[0].size() == 0 || newRecord[0] == "0" || newRecord[0] >= 48 && newRecord[0] <= 57)
+                        {
+                            qDebug() << "IN";
+                            newRecord.clear();
+                            newRecord.push_back(" ");
+                            newRecord.push_back(" ");
+                            newRecord.push_back("0");
+                            newRecord.push_back("0");
+                            newRecord.push_back("0");
+                            newRecord.push_back("No");
+                            for (int j = 0; j < lineToken.size(); j++)
+                            {
+                                currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                            }
+
+                        }
+                        if (newRecord[1].size() == 0 || newRecord[1] == "0" || newRecord[1] >= 48 && newRecord[1] <= 57)
+                        {
+                            qDebug() << "IN 2";
+                            newRecord.clear();
+                            newRecord.push_back(" ");
+                            newRecord.push_back(" ");
+                            newRecord.push_back("0");
+                            newRecord.push_back("0");
+                            newRecord.push_back("0");
+                            newRecord.push_back("No");
+                            for (int j = 0; j < lineToken.size(); j++)
+                            {
+                                currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                            }
+                        }
+                      }
+
+                  //creating a student object with the information parsed from the file
+                  CurrentStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toInt(), newRecord.at(3).toInt(), newRecord.at(4).toInt(), newRecord.at(5).toUInt());
+                  currentStudents.push_back(student);
 
                 //converting the boolean value of induction attendance to a string of text displayed to the user
                 if (student.getInductionAttendance() == 0)
@@ -347,6 +346,7 @@ void mainWidget::populateCurrentStudentsModel()
 
             lineindex++;
         }
+    }
     }
 }
 
@@ -452,8 +452,12 @@ void mainWidget::updateContributionsModel()
     for (int i = 0; i < currentStudents.size(); i++)
     {
         QList<QStandardItem*> fullName;
-        fullName.append(new QStandardItem(currentStudents[i].getFirstName()));
-        fullName.append(new QStandardItem(currentStudents[i].getLastName()));
+        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
+        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+        fullName.append(first);
+        fullName.append(last);
 
         for (int j = 0; j < eventNames.size(); j++)
         {
@@ -472,21 +476,23 @@ void mainWidget::writeToContributionsFile()
     qDebug() << "EVENT SIZE" << eventNames.size() << currentStudents.size();
     QString filename = "contributions.csv";
     QFile file(filename);
-    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream stream(&file);
+    if(file.open(QIODevice::ReadWrite | QIODevice::Truncate))
+    {
+        QTextStream stream(&file);
 
-    for (int i = 0; i < eventNames.size(); i++)
-    {
-        stream << eventNames[i] << ",";
-    }
-    stream << endl;
-    for (int j = 0; j < currentStudents.size(); j++)
-    {
-        for (int k = 0; k < eventNames.size(); k++)
+        for (int i = 0; i < eventNames.size(); i++)
         {
-            stream << currentStudents[j].getStudentEvent(k) << ",";
+            stream << eventNames[i] << ",";
         }
         stream << endl;
+        for (int j = 0; j < currentStudents.size(); j++)
+        {
+            for (int k = 0; k < eventNames.size(); k++)
+            {
+                stream << currentStudents[j].getStudentEvent(k) << ",";
+            }
+            stream << endl;
+        }
     }
 }
 
@@ -500,47 +506,54 @@ void mainWidget::populateContributionsModel()
     for (int i = 0; i < currentStudents.size(); i++)
     {
         QList<QStandardItem*> fullName;
-        fullName.append(new QStandardItem(currentStudents[i].getFirstName()));
-        fullName.append(new QStandardItem(currentStudents[i].getLastName()));
+        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+        first->setFlags(first->flags() & ~Qt::ItemIsEditable);      //changing the item flags to make the student name non editable from the contributions page
+        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+        fullName.append(first);
+        fullName.append(last);
         contributionsModel->appendRow(fullName);
     }
 
     QString filename = "contributions.csv";
     QFile file(filename);
-    file.open(QIODevice::ReadOnly);
-    int lineindex = 0;
-    QTextStream input(&file);
-    QVector<QString> values;
 
-    while (!input.atEnd())
+    if (file.open(QIODevice::ReadOnly))
     {
-        QString fileLine = input.readLine();
-        QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
+        int lineindex = 0;
+        QTextStream input(&file);
+        QVector<QString> values;
 
-        if (lineindex == 0)             //gets the first line of the file, which is the names of the events
+        while (!input.atEnd())
         {
-            for (int i = 0; i < lineToken.size(); i++)
+            QString fileLine = input.readLine();
+            QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
+
+            if (lineindex == 0)             //gets the first line of the file, which is the names of the events
             {
-                QString value = lineToken.at(i);
-                eventNames.push_back(value);
+                for (int i = 0; i < lineToken.size(); i++)
+                {
+                    QString value = lineToken.at(i);
+                    eventNames.push_back(value);
 
-                contributionsModel->setHorizontalHeaderItem(i+2, new QStandardItem(value));
+                    contributionsModel->setHorizontalHeaderItem(i+2, new QStandardItem(value));
 
-                qDebug() << "EVENT NAMES: " << eventNames[i];
+                    qDebug() << "EVENT NAMES: " << eventNames[i];
 
-             }
+                }
 
-        lineindex++;
-        }
-        else if(lineindex > 0 && lineindex <= currentStudents.size())          //gets every other line afterwards, which is the student event data
-        {
-            for (int j = 0; j < lineToken.size(); j++)
+            lineindex++;
+            }
+            else if(lineindex > 0 && lineindex <= currentStudents.size())          //gets every other line afterwards, which is the student event data
             {
+                for (int j = 0; j < lineToken.size(); j++)
+                {
                 QString value = lineToken.at(j);
                 contributionsModel->setItem(lineindex - 1, j + 2, new QStandardItem(value));
                 currentStudents[lineindex-1].setStudentEvent(value);
+                }
+                lineindex++;
             }
-            lineindex++;
         }
     }
 }

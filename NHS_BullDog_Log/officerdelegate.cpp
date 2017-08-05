@@ -24,7 +24,8 @@ QWidget *officerDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4)
     {
         QSpinBox *editor = new QSpinBox(parent);
-
+        editor->setMinimum(0);
+        editor->setMaximum(10);
         return editor;
     }
     else if (index.column() == 5)
