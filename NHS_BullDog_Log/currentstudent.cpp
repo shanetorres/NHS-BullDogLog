@@ -54,3 +54,20 @@ QVector<QString> CurrentStudent::getEventVector()
 {
     return studentEvents;
 }
+
+//admin set and get methods
+
+void CurrentStudent::setApplicationBool(bool app) { application = app; }
+bool CurrentStudent::getApplicationBool() { return application; }
+
+void CurrentStudent::setEssayBool(bool ess) { essay = ess; }
+bool CurrentStudent::getEssayBool() { return essay; }
+
+void CurrentStudent::setRecommendationBool(bool rec) { teach = rec; }
+bool CurrentStudent::getRecommendationBool() { return teach; }
+
+void CurrentStudent::setApprovalBool(bool boa) { board = boa; }
+bool CurrentStudent::getApprovalBool() { return board; }
+
+void CurrentStudent::setStudentGpa(float gpa) { studentGpa = gpa; }
+float CurrentStudent::getStudentGpa() { return studentGpa; }

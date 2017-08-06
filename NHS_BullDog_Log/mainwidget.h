@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include "officerdelegate.h"
+#include "admindelegate.h"
 #include "contributiondelegate.h"
 #include "currentstudent.h"
 #include "addcontributiondialog.h"
@@ -82,6 +83,15 @@ private slots:
 
     void on_eventEdited(QString, int, int);
 
+    //ADMIN RECORDS
+
+    void on_offMenuButton_2_clicked();
+
+    void on_offAddStudentButton_2_clicked();
+
+    void on_offDeleteStudentButton_2_clicked();
+
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
@@ -96,5 +106,9 @@ private:
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
+    /*~ADMIN RECORDS~*/
+    QStandardItemModel* currentAdminModel;
+    const int currentAdminCols = 7;
+    adminDelegate *currentAdminDelegate;
 };
 #endif // MAINWIDGET_H

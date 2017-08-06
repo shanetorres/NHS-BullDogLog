@@ -29,13 +29,15 @@ SOURCES += main.cpp\
     officerdelegate.cpp \
     currentstudent.cpp \
     addcontributiondialog.cpp \
-    contributiondelegate.cpp
+    contributiondelegate.cpp \
+    admindelegate.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
     currentstudent.h \
     contributiondelegate.h \
     addcontributiondialog.h \
+    admindelegate.h
 
 
 FORMS    += mainwidget.ui \

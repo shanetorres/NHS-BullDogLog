@@ -17,7 +17,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="startPage">
       <layout class="QGridLayout" name="gridLayout">
@@ -60,13 +60,65 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="adminPage"/>
+     <widget class="QWidget" name="adminPage">
+      <widget class="QWidget" name="">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>861</width>
+         <height>501</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QTableView" name="currentTableView_2"/>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Admin Records</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QPushButton" name="offAddStudentButton_2">
+             <property name="text">
+              <string>Add Student</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="offDeleteStudentButton_2">
+             <property name="text">
+              <string>Delete Student</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="offMenuButton_2">
+             <property name="text">
+              <string>Main Menu</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
      <widget class="QWidget" name="officerPage">
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="overallTab">
           <attribute name="title">

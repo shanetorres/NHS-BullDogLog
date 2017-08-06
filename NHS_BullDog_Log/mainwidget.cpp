@@ -15,12 +15,35 @@ mainWidget::mainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    mainWidget::setWindowTitle("NHS Bulldog Log");
+
     /*----------------------------ADMIN RECORDS------------------------------*/
 
+    //instantiating the custom delegate
+    currentAdminDelegate = new adminDelegate(this);
+
+    //connecting all delegate signals to desired slots on the mainwidget
+    connect(currentAdminDelegate, SIGNAL(studentNameEdited(CurrentStudent, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentSpinEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentComboEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
 
 
+    //creating the model for all current students and setting resizing parameters for the view
+    currentAdminModel = new QStandardItemModel(this);
+    ui->currentTableView_2->setModel(currentAdminModel);
+    ui->currentTableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    //assigning the custom delegate to the view
+    ui->currentTableView_2->setItemDelegate(currentAdminDelegate);
 
+    //setting the header text of the model
+    currentAdminModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
+    currentAdminModel->setHorizontalHeaderItem(1, new QStandardItem(QString("Last Name")));
+    currentAdminModel->setHorizontalHeaderItem(2, new QStandardItem(QString("Application")));
+    currentAdminModel->setHorizontalHeaderItem(3, new QStandardItem(QString("Essay")));
+    currentAdminModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Teacher Recommendations")));
+    currentAdminModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Board Approval")));
+    currentAdminModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Gpa")));
 
     /*----------------------------OFFICER RECORDS----------------------------*/
 
@@ -287,7 +310,7 @@ void mainWidget::populateCurrentStudentsModel()
                     if (newRecord.size() > 0)
                     {
 
-                        if (newRecord[0].size() == 0 || newRecord[0] == "0" || newRecord[0] >= 48 && newRecord[0] <= 57)
+                        if (newRecord[0].size() == 0 || newRecord[0] == "0" || (newRecord[0] >= 48 && newRecord[0] <= 57))
                         {
                             qDebug() << "IN";
                             newRecord.clear();
@@ -303,7 +326,7 @@ void mainWidget::populateCurrentStudentsModel()
                             }
 
                         }
-                        if (newRecord[1].size() == 0 || newRecord[1] == "0" || newRecord[1] >= 48 && newRecord[1] <= 57)
+                        if (newRecord[1].size() == 0 || newRecord[1] == "0" || (newRecord[1] >= 48 && newRecord[1] <= 57))
                         {
                             qDebug() << "IN 2";
                             newRecord.clear();
@@ -565,3 +588,35 @@ void mainWidget::populateContributionsModel()
 
 
 /*~~~~~~~~~~~~~~~~~~~ADMIN RECORDS BEGIN~~~~~~~~~~~~~~~~~*/
+
+void mainWidget::on_offMenuButton_2_clicked() { ui->stackedWidget->setCurrentIndex(0); }
+
+void mainWidget::on_offAddStudentButton_2_clicked()
+{
+    //inserts a blank record with 7 columns to be edited
+   QList<QStandardItem *> newRecord;
+   for (int i = 0; i < currentAdminCols; i++)
+   {
+       newRecord.append(new QStandardItem(" "));
+   }
+   currentAdminModel->appendRow(newRecord);
+
+}
+
+void mainWidget::on_offDeleteStudentButton_2_clicked()
+{
+    disableButtons();
+
+    //Message box confirms whether or not the record should be deleted
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Delete Student",
+                 "Are you sure you want to delete this student?", QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        officerDeleteRecord();
+    }
+    else {
+        enableButtons();
+    }
+}
+
+
