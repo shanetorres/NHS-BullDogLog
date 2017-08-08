@@ -597,10 +597,25 @@ void mainWidget::on_offAddStudentButton_2_clicked()
    QList<QStandardItem *> newRecord;
    for (int i = 0; i < currentAdminCols; i++)
    {
-       newRecord.append(new QStandardItem(" "));
+     if (i == 0 || i ==1)
+     {
+     newRecord.append(new QStandardItem(" "));
+     }
+     else if (i == 2 || i == 3 || i == 4 || i == 5)
+     {
+     newRecord.append(new QStandardItem("No"));
+     }
+     else if (i == 6)
+     {
+     newRecord.append(new QStandardItem("0.0"));
+     }
    }
    currentAdminModel->appendRow(newRecord);
 
+   ProspectStudent student;
+   currentProspectStudents.push_back(student);
+
+   totalProspectStudents++;
 }
 
 void mainWidget::on_offDeleteStudentButton_2_clicked()
@@ -612,11 +627,24 @@ void mainWidget::on_offDeleteStudentButton_2_clicked()
                  "Are you sure you want to delete this student?", QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        officerDeleteRecord();
+        adminDeleteRecord();
     }
     else {
         enableButtons();
     }
+}
+
+//deletes the selected record from the view as well as from the vector
+void mainWidget::adminDeleteRecord()
+{
+    //removes current student from vector
+    if (totalProspectStudents != 0)
+    {
+        currentProspectStudents.erase(currentProspectStudents.begin()+ui->currentTableView_2->currentIndex().row());
+        totalStudents--;
+    }
+    currentAdminModel->removeRows(ui->currentTableView_2->currentIndex().row(),1);
+    enableButtons();
 }
 
 

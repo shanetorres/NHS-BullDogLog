@@ -45,6 +45,10 @@ public:
 
     void populateContributionsModel();
 
+    //admin records
+
+    void adminDeleteRecord();
+
 private slots:
 
     void on_adminButton_clicked();
@@ -110,5 +114,7 @@ private:
     QStandardItemModel* currentAdminModel;
     const int currentAdminCols = 7;
     adminDelegate *currentAdminDelegate;
+    std::vector<ProspectStudent> currentProspectStudents;
+    int totalProspectStudents;
 };
 #endif // MAINWIDGET_H

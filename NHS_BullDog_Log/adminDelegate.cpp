@@ -7,13 +7,12 @@
 
 adminDelegate::adminDelegate(QObject *parent) : QItemDelegate(parent)
 {
-    //the text that is dispalyed in the combo box
-    Items.push_back("No");
-    Items.push_back("Yes");
+
 }
 
 QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
+
     //control statement determines which editor to create and return depenedent on the column number
     if(index.column() == 0 || index.column() == 1)
     {
@@ -23,10 +22,8 @@ QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)
     {
         QComboBox *editor = new QComboBox(parent);
-        for (int i  = 0; i < Items.size(); i++)
-        {
-            editor->addItem(Items[i]);
-        }
+        editor->addItem("No");
+        editor->addItem("Yes");
         return editor;
     }
     else if (index.column() == 6)
@@ -88,20 +85,17 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         emit studentNameEdited(student, index.row());
 
     }
-    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)     //data from spin boxes
+    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)     //data from combo boxes
     {
         ProspectStudent student;
-        QString value = index.model()->data(index, Qt::EditRole).toString();
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
-        comboBox->setCurrentText(value);
+        model->setData(index, comboBox->currentText(), Qt::EditRole);
 
         QVector<QString> studentDataString(4);
         QVector<bool> studentDataBool(4);
 
         for (int i = 0; i < 4; i++)
         {
-            QModelIndex dataIndex = model->index(index.row(), i + 2, QModelIndex());
-            studentDataString[i] = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
             if (studentDataString[i] == "Yes")
             {
                 studentDataBool[i] = true;
@@ -110,7 +104,6 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
             {
                 studentDataBool[i] = false;
             }
-            emit studentComboEdited(student, index.row());
         }
 
         bool studentApplication = studentDataBool[0];
@@ -122,6 +115,8 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         student.setEssayBool(studentEssay);
         student.setRecommendationBool(studentRecommendation);
         student.setApprovalBool(studentApproval);
+
+        emit studentComboEdited(student, index.row());
     }
     else if (index.column() == 6)                       //data from combo box
     {

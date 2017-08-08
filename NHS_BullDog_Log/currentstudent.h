@@ -36,22 +36,6 @@ public:
     void setEventVector(QVector<QString>);
     QVector<QString> getEventVector();
 
-    //admin set and get methods
-
-    void setApplicationBool(bool);
-    bool getApplicationBool();
-
-    void setEssayBool(bool);
-    bool getEssayBool();
-
-    void setRecommendationBool(bool);
-    bool getRecommendationBool();
-
-    void setApprovalBool(bool);
-    bool getApprovalBool();
-
-    void setStudentGpa(float);
-    float getStudentGpa();
 
 private:
     QString firstName;
@@ -61,12 +45,7 @@ private:
     int attendedMeetings;
     bool inductionAttend;
     QVector<QString> studentEvents;
-    //admin records
-    bool application;
-    bool essay;
-    bool teach;
-    bool board;
-    float studentGpa;
+
 };
 
 #endif // CURRENTSTUDENT_H
