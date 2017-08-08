@@ -48,9 +48,9 @@ void adminDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     }
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)
     {
-        int value = index.model()->data(index, Qt::EditRole).toInt();
-        QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
-        spinBox->setValue(value);
+        QString value = index.model()->data(index, Qt::EditRole).toString();
+        QComboBox *comboBox = static_cast<QComboBox*>(editor);
+        comboBox->setCurrentText(value);
     }
     else if (index.column() == 6)
     {
@@ -65,7 +65,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
 {
     if (index.column() == 0 || index.column() == 1)         //data from the line edits is assigned to a student object and that object is then emitted
     {
-        CurrentStudent student;
+        ProspectStudent student;
         QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
         QString value = lineEdit->text();
         model->setData(index,value, Qt::EditRole);
@@ -90,7 +90,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
     }
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)     //data from spin boxes
     {
-        CurrentStudent student;
+        ProspectStudent student;
         QString value = index.model()->data(index, Qt::EditRole).toString();
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         comboBox->setCurrentText(value);
@@ -125,7 +125,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
     }
     else if (index.column() == 6)                       //data from combo box
     {
-        CurrentStudent student;
+        ProspectStudent student;
         QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
         QString value = lineEdit->text();
         model->setData(index,value, Qt::EditRole);

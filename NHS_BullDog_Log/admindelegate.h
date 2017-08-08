@@ -7,12 +7,12 @@
 #include <QSize>
 #include <QLineEdit>
 #include <QString>
-#include "currentstudent.h"
+#include "prospectstudent.h"
 #include <vector>
 #include <QVector>
 #include <QComboBox>
 
-class CurrentStudent;
+class ProspectStudent;
 
 class adminDelegate : public QItemDelegate
 {
@@ -29,11 +29,11 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void studentNameEdited(CurrentStudent, int) const;
+    void studentNameEdited(ProspectStudent, int) const;
 
-    void studentSpinEdited(CurrentStudent, int) const;
+    void studentSpinEdited(ProspectStudent, int) const;
 
-    void studentComboEdited(CurrentStudent, int) const;
+    void studentComboEdited(ProspectStudent, int) const;
 
 
 public slots:

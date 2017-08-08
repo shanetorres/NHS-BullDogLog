@@ -2,7 +2,6 @@
 #define CURRENTSTUDENT_H
 #include <QString>
 #include "officerdelegate.h"
-#include "admindelegate.h"
 #include <QVector>
 
 class OfficerDelegate;

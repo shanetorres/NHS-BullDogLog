@@ -23,9 +23,9 @@ mainWidget::mainWidget(QWidget *parent) :
     currentAdminDelegate = new adminDelegate(this);
 
     //connecting all delegate signals to desired slots on the mainwidget
-    connect(currentAdminDelegate, SIGNAL(studentNameEdited(CurrentStudent, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int)));
-    connect(currentAdminDelegate, SIGNAL(studentSpinEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
-    connect(currentAdminDelegate, SIGNAL(studentComboEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentNameEdited(ProspectStudent, int)), this, SLOT(on_studentNameEdited(ProspectStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentSpinEdited(ProspectStudent, int)), this, SLOT(on_studentSpinEdited(ProspectStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentComboEdited(ProspectStudent,int)), this, SLOT(on_studentComboEdited(ProspectStudent,int)));
 
 
     //creating the model for all current students and setting resizing parameters for the view
