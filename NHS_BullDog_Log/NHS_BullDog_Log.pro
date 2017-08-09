@@ -29,13 +29,15 @@ SOURCES += main.cpp\
     officerdelegate.cpp \
     currentstudent.cpp \
     addcontributiondialog.cpp \
-    contributiondelegate.cpp
+    contributiondelegate.cpp \
+    servicedelegate.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
     currentstudent.h \
     contributiondelegate.h \
     addcontributiondialog.h \
+    servicedelegate.h
 
 
 FORMS    += mainwidget.ui \
@@ -46,7 +48,8 @@ RESOURCES += \
 
 DISTFILES += \
     data/currentstudents.csv \
-    data/contributions.csv
+    data/contributions.csv \
+    data/serviceprojects.csv
 
 
 

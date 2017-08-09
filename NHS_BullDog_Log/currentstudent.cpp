@@ -54,3 +54,24 @@ QVector<QString> CurrentStudent::getEventVector()
 {
     return studentEvents;
 }
+
+void CurrentStudent::setServeEvent(QString event) { serveEvents.push_back(event); }
+QString CurrentStudent::getServeEvent(int i) { return serveEvents[i]; }
+
+void CurrentStudent::setServeVector(QVector<QString> events)
+{
+    serveEvents.clear();
+    for (int i = 0; i < events.size(); i++)
+    {
+        serveEvents.push_back(" ");
+    }
+    for (int i = 0; i < events.size(); i++)
+    {
+        serveEvents[i] = events[i];
+    }
+}
+
+QVector<QString> CurrentStudent::getServeVector()
+{
+    return serveEvents;
+}

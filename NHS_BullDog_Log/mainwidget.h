@@ -5,6 +5,7 @@
 #include <QStandardItemModel>
 #include "officerdelegate.h"
 #include "contributiondelegate.h"
+#include "servicedelegate.h"
 #include "currentstudent.h"
 #include "addcontributiondialog.h"
 #include <vector>
@@ -44,6 +45,16 @@ public:
 
     void populateContributionsModel();
 
+    //service projects page
+
+    void initializeServiceModel();
+
+    void populateServiceModel();
+
+    void updateServiceModel();
+
+    void writeToServiceFile();
+
 private slots:
 
     void on_adminButton_clicked();
@@ -82,6 +93,16 @@ private slots:
 
     void on_eventEdited(QString, int, int);
 
+    /*SERVICE PROJECTS TAB*/
+
+    void on_serveMenuButton_clicked();
+
+    void on_serveAddEventButton_clicked();
+
+    void on_serveDeleteEventButton_clicked();
+
+    void on_serveEventEdited(QString, int, int);
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
@@ -96,5 +117,9 @@ private:
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
+    /*~SERVICE PROJECTS TAB~*/
+    QStandardItemModel* serviceModel;
+    ServiceDelegate* serviceDelegate;
+
 };
 #endif // MAINWIDGET_H

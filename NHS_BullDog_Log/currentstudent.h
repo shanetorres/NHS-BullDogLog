@@ -36,6 +36,12 @@ public:
     void setEventVector(QVector<QString>);
     QVector<QString> getEventVector();
 
+    void setServeEvent(QString);
+    QString getServeEvent(int);
+
+    void setServeVector(QVector<QString>);
+    QVector<QString> getServeVector();
+
 private:
     QString firstName;
     QString lastName;
@@ -44,6 +50,7 @@ private:
     int attendedMeetings;
     bool inductionAttend;
     QVector<QString> studentEvents;
+    QVector<QString> serveEvents;
 };
 
 #endif // CURRENTSTUDENT_H

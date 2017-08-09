@@ -66,7 +66,7 @@
        <item row="0" column="0">
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="overallTab">
           <attribute name="title">
@@ -158,6 +158,41 @@
           <attribute name="title">
            <string>Service Projects</string>
           </attribute>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0">
+            <widget class="QTableView" name="serviceTableView"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QGroupBox" name="serviceProjectsGroupBox">
+             <property name="title">
+              <string>Officer Records</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_5">
+              <item>
+               <widget class="QPushButton" name="serveAddEventButton">
+                <property name="text">
+                 <string>Add Event</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="serveDeleteEventButton">
+                <property name="text">
+                 <string>Delete Event</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="serveMenuButton">
+                <property name="text">
+                 <string>Main Menu</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </widget>
        </item>
