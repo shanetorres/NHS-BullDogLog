@@ -50,7 +50,8 @@ RESOURCES += \
 
 DISTFILES += \
     data/currentstudents.csv \
-    data/contributions.csv
+    data/contributions.csv \
+    data/currentprospectstudents.csv
 
 
 

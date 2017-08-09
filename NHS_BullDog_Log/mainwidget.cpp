@@ -652,10 +652,11 @@ void mainWidget::adminDeleteRecord()
 //assings data from line edits to an object in the vector based on the row number
 void mainWidget::on_studentNameEdited_2(ProspectStudent student, int row)
 {
+    qDebug() << "IN";
     currentProspectStudents[row].setFirstName(student.getFirstName());
     currentProspectStudents[row].setLastName(student.getLastName());
 
-    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
+    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName();
     writeToAdminFile();
 
 }
@@ -687,12 +688,13 @@ void mainWidget::on_studentGpaEdited(ProspectStudent student, int row)
 //writes all objects in the current prospect student vector to a file
 void mainWidget::writeToAdminFile()
 {
+
     QString filename = "currentprospectstudents.csv";
     QFile file(filename);
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QTextStream stream(&file);
 
-    for (int i = 0; currentProspectStudents.size(); i++) {
+    for (int i = 0; i < currentProspectStudents.size(); i++) {
         if (currentProspectStudents[i].getApplicationBool() > 1)
         {
             currentProspectStudents[i].setApplicationBool(false);
@@ -708,6 +710,10 @@ void mainWidget::writeToAdminFile()
         if (currentProspectStudents[i].getApprovalBool() > 1)
         {
             currentProspectStudents[i].setApprovalBool(false);
+        }
+        if (currentProspectStudents[i].getStudentGpa().size() == 0)
+        {
+            currentProspectStudents[i].setStudentGpa("0");
         }
     stream << currentProspectStudents[i].getFirstName() << "," << currentProspectStudents[i].getLastName() << ","
                                                    << currentProspectStudents[i].getApplicationBool() << "," << currentProspectStudents[i].getEssayBool() << ","
