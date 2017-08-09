@@ -29,17 +29,16 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void studentNameEdited(ProspectStudent, int) const;
+    void studentNameEdited_2(ProspectStudent, int) const;
 
-    void studentSpinEdited(ProspectStudent, int) const;
+    void studentComboEdited_2(ProspectStudent, int) const;
 
-    void studentComboEdited(ProspectStudent, int) const;
+    void studentGpaEdited(ProspectStudent, int) const;
 
 
 public slots:
 
 private:
-   std::vector<QString> Items;
 
 };
 

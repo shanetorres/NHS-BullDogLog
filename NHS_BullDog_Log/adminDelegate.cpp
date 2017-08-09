@@ -82,7 +82,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         student.setLastName(studentLastName);
 
         qDebug() << "After" << student.getFirstName() << " " << student.getLastName();
-        emit studentNameEdited(student, index.row());
+        emit studentNameEdited_2(student, index.row());
 
     }
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)     //data from combo boxes
@@ -91,32 +91,29 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         model->setData(index, comboBox->currentText(), Qt::EditRole);
 
+        QVector<bool> studentRequirements(4);
         QVector<QString> studentDataString(4);
-        QVector<bool> studentDataBool(4);
 
         for (int i = 0; i < 4; i++)
         {
-            if (studentDataString[i] == "Yes")
-            {
-                studentDataBool[i] = true;
+            QModelIndex dataIndex = model->index(index.row(), i + 2, QModelIndex());
+            studentDataString[i] = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
+            if (studentDataString[i] == "Yes") {
+                studentRequirements[i] = true;
             }
-            else
-            {
-                studentDataBool[i] = false;
+            else if (studentDataString[i] == "No") {
+                studentRequirements[i] = false;
             }
         }
 
-        bool studentApplication = studentDataBool[0];
-        bool studentEssay = studentDataBool[1];
-        bool studentRecommendation = studentDataBool[2];
-        bool studentApproval = studentDataBool[3];
+        student.setApplicationBool(studentRequirements[0]);
+        student.setEssayBool(studentRequirements[1]);
+        student.setRecommendationBool(studentRequirements[2]);
+        student.setApprovalBool(studentRequirements[3]);
 
-        student.setApplicationBool(studentApplication);
-        student.setEssayBool(studentEssay);
-        student.setRecommendationBool(studentRecommendation);
-        student.setApprovalBool(studentApproval);
+        qDebug() << "COMBOBOX: " << student.getApplicationBool() << " " << student.getEssayBool() << " " << student.getRecommendationBool() << " " << student.getApprovalBool();
 
-        emit studentComboEdited(student, index.row());
+        emit studentComboEdited_2(student, index.row());
     }
     else if (index.column() == 6)                       //data from combo box
     {
@@ -127,11 +124,13 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
        //a vector of QStrings saves data at specific cells in the tableView
 
         QModelIndex dataIndex = model->index(index.row(), 6, QModelIndex());
-        float studentGpa = dataIndex.model()->data(dataIndex, Qt::EditRole).toFloat();
+        QString studentGpa = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
 
         student.setStudentGpa(studentGpa);
 
-        emit studentNameEdited(student, index.row());
+        qDebug() << "After" << student.getFirstName() << " " << student.getLastName() << " " << student.getStudentGpa();
+
+        emit studentGpaEdited(student, index.row());
     }
 
 

@@ -7,6 +7,7 @@
 #include "admindelegate.h"
 #include "contributiondelegate.h"
 #include "currentstudent.h"
+#include "prospectstudent.h"
 #include "addcontributiondialog.h"
 #include <vector>
 #include <QFile>
@@ -48,6 +49,10 @@ public:
     //admin records
 
     void adminDeleteRecord();
+
+    void writeToAdminFile();
+
+    void populateCurrentProspectStudentsModel();
 
 private slots:
 
@@ -95,6 +100,13 @@ private slots:
 
     void on_offDeleteStudentButton_2_clicked();
 
+    //ADMIN SIGNALS
+
+    void on_studentNameEdited_2(ProspectStudent, int);
+
+    void on_studentComboEdited_2(ProspectStudent, int);
+
+    void on_studentGpaEdited(ProspectStudent, int);
 
 private:
     Ui::mainWidget *ui;
