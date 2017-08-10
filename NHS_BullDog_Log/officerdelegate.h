@@ -39,6 +39,8 @@ signals:
 
     void studentComboEdited(CurrentStudent, int) const;
 
+    void studentGradeEdited(CurrentStudent, int) const;
+
 
 public slots:
 

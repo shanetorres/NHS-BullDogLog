@@ -79,6 +79,8 @@ private slots:
 
     void on_studentComboEdited(CurrentStudent, int);
 
+    void on_studentGradeEdited(CurrentStudent, int);
+
     /*~CONTRIBUTIONS TAB~*/
 
     void on_contMenuButton_clicked();
@@ -107,7 +109,7 @@ private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
     QStandardItemModel* currentStudentsModel;
-    const int currentStudentCols = 6;
+    const int currentStudentCols = 7;
     officerDelegate *currentStudentsDelegate;
     std::vector<CurrentStudent> currentStudents;
     int totalStudents;

@@ -6,7 +6,7 @@ CurrentStudent::CurrentStudent()
 }
 
 //default constructor assigns all inputted data to data members of the class via the set functions
-CurrentStudent::CurrentStudent(QString first, QString last, int cont, int serv, int meetings, bool induct)
+CurrentStudent::CurrentStudent(QString first, QString last, int cont, int serv, int meetings, bool induct, int grade)
 {
     setFirstName(first);
     setLastName(last);
@@ -14,6 +14,7 @@ CurrentStudent::CurrentStudent(QString first, QString last, int cont, int serv, 
     setServProjects(serv);
     setAttendedMeetings(meetings);
     setInductionAttendance(induct);
+    setGradeLevel(grade);
 }
 
 void CurrentStudent::setFirstName(QString first) { firstName = first; }
@@ -33,6 +34,9 @@ int CurrentStudent:: getAttendedMeetings() { return attendedMeetings; }
 
 void CurrentStudent::setInductionAttendance(bool induct) { inductionAttend = induct; }
 bool CurrentStudent::getInductionAttendance() { return inductionAttend; }
+
+void CurrentStudent::setGradeLevel(int grade) { gradeLevel = grade; }
+int CurrentStudent::getGradeLevel() { return gradeLevel; }
 
 void CurrentStudent::setStudentEvent(QString event) { studentEvents.push_back(event); }
 QString CurrentStudent::getStudentEvent(int i) { return studentEvents[i]; }

@@ -35,18 +35,19 @@ mainWidget::mainWidget(QWidget *parent) :
     connect(currentStudentsDelegate, SIGNAL(studentNameEdited(CurrentStudent, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int)));
     connect(currentStudentsDelegate, SIGNAL(studentSpinEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
     connect(currentStudentsDelegate, SIGNAL(studentComboEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
-
+    connect(currentStudentsDelegate, SIGNAL(studentGradeEdited(CurrentStudent,int)), this, SLOT(on_studentGradeEdited(CurrentStudent,int)));
 
     //creating the model for all current students and setting resizing parameters for the view
     currentStudentsModel = new QStandardItemModel(this);
     populateCurrentStudentsModel();          //reading data from file into the table
     //creating a sorting model and setting the current students model as its source DOESN"T WORK
-//    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
-//    currentStudentsSortModel->setDynamicSortFilter(true);
-//    currentStudentsSortModel->setSourceModel(currentStudentsModel);
+    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
+    currentStudentsSortModel->setDynamicSortFilter(false);
 
-    ui->currentTableView->setModel(currentStudentsModel);
-//    ui->currentTableView->setSortingEnabled(true);
+    currentStudentsSortModel->setSourceModel(currentStudentsModel);
+
+    ui->currentTableView->setModel(currentStudentsSortModel);
+    ui->currentTableView->setSortingEnabled(true);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     //assigning the custom delegate to the view
@@ -59,6 +60,7 @@ mainWidget::mainWidget(QWidget *parent) :
     currentStudentsModel->setHorizontalHeaderItem(3, new QStandardItem(QString("Service Projects")));
     currentStudentsModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Meetings Attended")));
     currentStudentsModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Induction Attendance")));
+    currentStudentsModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Grade Level")));
 
     /*<END OVERALL PAGE>*/
 
@@ -216,7 +218,7 @@ void mainWidget::disableButtons()
 /*----OVERALL TAB DELEGATE SLOTS----*/
 
 
-//assings data from line edits to an object in the vector based on the row number
+//assigns data from line edits to an object in the vector based on the row number
 void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
 {
     currentStudents[row].setFirstName(student.getFirstName());
@@ -227,7 +229,7 @@ void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
     writeToFile();
 }
 
-//assings data from the spin boxes to an object in the vector
+//assigns data from the spin boxes to an object in the vector
 void mainWidget::on_studentSpinEdited(CurrentStudent student, int row)
 {
     currentStudents[row].setContributions(student.getContributions());
@@ -239,11 +241,19 @@ void mainWidget::on_studentSpinEdited(CurrentStudent student, int row)
     writeToFile();
 }
 
-//assings data from the combo box to an object in the vector
+//assigns data from the combo box to an object in the vector
 void mainWidget::on_studentComboEdited(CurrentStudent student, int row)
 {
     currentStudents[row].setInductionAttendance(student.getInductionAttendance());
     qDebug() << "ATTENDANCE: " << currentStudents[row].getInductionAttendance();
+    writeToFile();
+}
+
+void mainWidget::on_studentGradeEdited(CurrentStudent student, int row)
+{
+    qDebug() << "IN MY G";
+    qDebug() << "STUDENT GRADEEEE: " << student.getGradeLevel();
+    currentStudents[row].setGradeLevel(student.getGradeLevel());
     writeToFile();
 }
 
@@ -259,15 +269,15 @@ void mainWidget::writeToFile()
     for (int i = 0; i < currentStudents.size(); i++)
     {
         //not the best solution, but eliminating a bug that sets these values to random numbers if not entered
-        if (currentStudents[i].getContributions() > 100 || currentStudents[i].getContributions() < 0)
+        if (currentStudents[i].getContributions() > 10 || currentStudents[i].getContributions() < 0)
         {
             currentStudents[i].setContributions(0);
         }
-        if (currentStudents[i].getServProjects() > 100 || currentStudents[i].getServProjects() < 0)
+        if (currentStudents[i].getServProjects() > 10 || currentStudents[i].getServProjects() < 0)
         {
             currentStudents[i].setServProjects(0);
         }
-        if (currentStudents[i].getAttendedMeetings() > 100 || currentStudents[i].getAttendedMeetings() < 0)
+        if (currentStudents[i].getAttendedMeetings() > 10 || currentStudents[i].getAttendedMeetings() < 0)
         {
             currentStudents[i].setAttendedMeetings(0);
         }
@@ -275,10 +285,15 @@ void mainWidget::writeToFile()
         {
             currentStudents[i].setInductionAttendance(false);
         }
+        if (currentStudents[i].getGradeLevel() > 12 || currentStudents[i].getGradeLevel() < 11)
+        {
+            currentStudents[i].setGradeLevel(11);
+        }
 
         stream << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
                                                    << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
-                                                   << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," << endl;
+                                                   << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
+                                                      currentStudents[i].getGradeLevel() << "," << endl;
     }
 }
 
@@ -332,6 +347,7 @@ void mainWidget::populateCurrentStudentsModel()
                             newRecord.push_back("0");
                             newRecord.push_back("0");
                             newRecord.push_back("No");
+                            newRecord.push_back("11");
                             for (int j = 0; j < lineToken.size(); j++)
                             {
                                 currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
@@ -348,6 +364,7 @@ void mainWidget::populateCurrentStudentsModel()
                             newRecord.push_back("0");
                             newRecord.push_back("0");
                             newRecord.push_back("No");
+                            newRecord.push_back("11");
                             for (int j = 0; j < lineToken.size(); j++)
                             {
                                 currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
@@ -356,7 +373,7 @@ void mainWidget::populateCurrentStudentsModel()
                       }
 
                   //creating a student object with the information parsed from the file
-                  CurrentStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toInt(), newRecord.at(3).toInt(), newRecord.at(4).toInt(), newRecord.at(5).toUInt());
+                  CurrentStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toInt(), newRecord.at(3).toInt(), newRecord.at(4).toInt(), newRecord.at(5).toUInt(), newRecord.at(6).toInt());
                   currentStudents.push_back(student);
 
                 //converting the boolean value of induction attendance to a string of text displayed to the user
@@ -372,7 +389,7 @@ void mainWidget::populateCurrentStudentsModel()
                 }
 
                 qDebug() << "POPULATE STUDENT: " << student.getFirstName() << ", " << student.getLastName() << ", " << student.getContributions()
-                                                        << ", " << student.getServProjects() << ", " << student.getAttendedMeetings() << ", " << student.getInductionAttendance();
+                                                        << ", " << student.getServProjects() << ", " << student.getAttendedMeetings() << ", " << student.getInductionAttendance() << ", " << student.getGradeLevel();
                 totalStudents++;
              }
              catch (const std::out_of_range& e)

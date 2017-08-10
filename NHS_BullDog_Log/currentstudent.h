@@ -10,7 +10,7 @@ class CurrentStudent
 {
 public:
     CurrentStudent();
-    CurrentStudent(QString, QString, int, int, int, bool);
+    CurrentStudent(QString, QString, int, int, int, bool, int);
 
     void setFirstName(QString);
     QString getFirstName();
@@ -29,6 +29,9 @@ public:
 
     void setInductionAttendance(bool);
     bool getInductionAttendance();
+
+    void setGradeLevel(int);
+    int getGradeLevel();
 
     void setStudentEvent(QString);
     QString getStudentEvent(int);
@@ -49,6 +52,7 @@ private:
     int servProjects;
     int attendedMeetings;
     bool inductionAttend;
+    int gradeLevel;
     QVector<QString> studentEvents;
     QVector<QString> serveEvents;
 };
