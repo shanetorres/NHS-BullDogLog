@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     addcontributiondialog.cpp \
     contributiondelegate.cpp \
     admindelegate.cpp \
-    prospectstudent.cpp
+    prospectstudent.cpp \
+    notes.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
@@ -39,11 +40,13 @@ HEADERS  += mainwidget.h \
     contributiondelegate.h \
     addcontributiondialog.h \
     admindelegate.h \
-    prospectstudent.h
+    prospectstudent.h \
+    notes.h
 
 
 FORMS    += mainwidget.ui \
-    addcontributiondialog.ui
+    addcontributiondialog.ui \
+    notes.ui
 
 RESOURCES += \
     pictures.qrc
@@ -51,7 +54,12 @@ RESOURCES += \
 DISTFILES += \
     data/currentstudents.csv \
     data/contributions.csv \
-    data/currentprospectstudents.csv
+    data/currentprospectstudents.csv \
+    ../../../../Desktop/nhslogo.png \
+    png files/nhslogo.png \
+    png files/nhslogo.png \
+    nhslogo.png \
+    nhslogo_a2I_icon.ico
 
 
 

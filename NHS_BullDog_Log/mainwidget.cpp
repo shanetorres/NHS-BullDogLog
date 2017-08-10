@@ -8,6 +8,7 @@
 #include <QModelIndex>
 #include <stdexcept>
 #include <QStandardItem>
+#include <QSizePolicy>
 
 mainWidget::mainWidget(QWidget *parent) :
     QWidget(parent),
@@ -15,11 +16,18 @@ mainWidget::mainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    QImage image("C:/Users/parke_000/Desktop/nhs-logo-tm-1.png");
-//    QImage image2 = image.scaled(400, 600, Qt::KeepAspectRatio);
-//    ui->label->setPixmap(QPixmap::fromImage(image2));
+     /*----------------------------GRAPHICS------------------------------*/
 
-    mainWidget::setWindowTitle("NHS Bulldog Log");
+    this->setWindowTitle("NHS Bulldog Log");
+    this->setWindowIcon(QIcon(":/nhslogo_a2I_icon.ico"));
+
+    //this->setStyleSheet("background-color: cyan;");
+    //ui->groupBox_2->setStyleSheet("background-color: white; border-color: black;");
+    //ui->currentTableView_2->setStyleSheet("background-color: white; border-color: black;");
+
+    QImage image(":/nhslogo.png");
+    QImage image2 = image.scaled(400, 600, Qt::KeepAspectRatio);
+    ui->label->setPixmap(QPixmap::fromImage(image2));
 
     /*----------------------------ADMIN RECORDS------------------------------*/
 
@@ -126,7 +134,7 @@ void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
 /*---------------------OVERALL TAB ON OFFICER PAGE--------------------*/
 
-void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); }
+void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
 
 void mainWidget::on_offAddStudentButton_clicked()
 {
@@ -597,7 +605,7 @@ void mainWidget::populateContributionsModel()
 
 /*~~~~~~~~~~~~~~~~~~~ADMIN RECORDS BEGIN~~~~~~~~~~~~~~~~~*/
 
-void mainWidget::on_offMenuButton_2_clicked() { ui->stackedWidget->setCurrentIndex(0); }
+void mainWidget::on_offMenuButton_2_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
 
 void mainWidget::on_offAddStudentButton_2_clicked()
 {
