@@ -41,13 +41,13 @@ mainWidget::mainWidget(QWidget *parent) :
     currentStudentsModel = new QStandardItemModel(this);
     populateCurrentStudentsModel();          //reading data from file into the table
     //creating a sorting model and setting the current students model as its source DOESN"T WORK
-    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
-    currentStudentsSortModel->setDynamicSortFilter(false);
+//    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
+//    currentStudentsSortModel->setDynamicSortFilter(false);
 
-    currentStudentsSortModel->setSourceModel(currentStudentsModel);
+//    currentStudentsSortModel->setSourceModel(currentStudentsModel);
 
-    ui->currentTableView->setModel(currentStudentsSortModel);
-    ui->currentTableView->setSortingEnabled(true);
+    ui->currentTableView->setModel(currentStudentsModel);
+//    ui->currentTableView->setSortingEnabled(true);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     //assigning the custom delegate to the view
