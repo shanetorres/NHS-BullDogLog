@@ -15,6 +15,10 @@ mainWidget::mainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+//    QImage image("C:/Users/parke_000/Desktop/nhs-logo-tm-1.png");
+//    QImage image2 = image.scaled(400, 600, Qt::KeepAspectRatio);
+//    ui->label->setPixmap(QPixmap::fromImage(image2));
+
     mainWidget::setWindowTitle("NHS Bulldog Log");
 
     /*----------------------------ADMIN RECORDS------------------------------*/
@@ -25,7 +29,8 @@ mainWidget::mainWidget(QWidget *parent) :
     //connecting all delegate signals to desired slots on the mainwidget
     connect(currentAdminDelegate, SIGNAL(studentNameEdited_2(ProspectStudent, int)), this, SLOT(on_studentNameEdited_2(ProspectStudent, int)));
     connect(currentAdminDelegate, SIGNAL(studentComboEdited_2(ProspectStudent,int)), this, SLOT(on_studentComboEdited_2(ProspectStudent,int)));
-    connect(currentAdminDelegate, SIGNAL(studentGpaEdited(ProspectStudent, int)), this, SLOT(on_studentGpaEdited(ProspectStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentClassEdited(ProspectStudent,int)), this, SLOT(on_studentClassEdited(ProspectStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentStatusEdited(ProspectStudent,int)), this, SLOT(on_studentStatusEdited(ProspectStudent,int)));
 
 
     //creating the model for all current students and setting resizing parameters for the view
@@ -45,6 +50,8 @@ mainWidget::mainWidget(QWidget *parent) :
     currentAdminModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Teacher Recommendations")));
     currentAdminModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Board Approval")));
     currentAdminModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Gpa")));
+    currentAdminModel->setHorizontalHeaderItem(7, new QStandardItem(QString("Class")));
+    currentAdminModel->setHorizontalHeaderItem(8, new QStandardItem(QString("Status")));
 
     /*----------------------------OFFICER RECORDS----------------------------*/
 
@@ -594,7 +601,7 @@ void mainWidget::on_offMenuButton_2_clicked() { ui->stackedWidget->setCurrentInd
 
 void mainWidget::on_offAddStudentButton_2_clicked()
 {
-    //inserts a blank record with 7 columns to be edited
+    //inserts a blank record with 9 columns to be edited
    QList<QStandardItem *> newRecord;
    for (int i = 0; i < currentAdminCols; i++)
    {
@@ -602,13 +609,17 @@ void mainWidget::on_offAddStudentButton_2_clicked()
      {
      newRecord.append(new QStandardItem(" "));
      }
-     else if (i == 2 || i == 3 || i == 4 || i == 5)
+     else if (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)
      {
      newRecord.append(new QStandardItem("No"));
      }
-     else if (i == 6)
+     else if (i == 7)
      {
-     newRecord.append(new QStandardItem("0.0"));
+     newRecord.append(new QStandardItem(" "));
+     }
+     else if (i == 8)
+     {
+     newRecord.append(new QStandardItem("Applicant"));
      }
    }
    currentAdminModel->appendRow(newRecord);
@@ -668,22 +679,34 @@ void mainWidget::on_studentComboEdited_2(ProspectStudent student, int row)
     currentProspectStudents[row].setEssayBool(student.getEssayBool());
     currentProspectStudents[row].setRecommendationBool(student.getRecommendationBool());
     currentProspectStudents[row].setApprovalBool(student.getApprovalBool());
-
-    qDebug() << "REQUIREMENTS: " << currentProspectStudents[row].getApplicationBool() << ", " << currentProspectStudents[row].getEssayBool() << ", "
-             << currentProspectStudents[row].getRecommendationBool() << ", " << currentProspectStudents[row].getApprovalBool();
-    writeToAdminFile();
-
-}
-
-//assings data from the gpa text box to an object in the vector
-void mainWidget::on_studentGpaEdited(ProspectStudent student, int row)
-{
     currentProspectStudents[row].setStudentGpa(student.getStudentGpa());
 
-    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
+    qDebug() << "REQUIREMENTS: " << currentProspectStudents[row].getApplicationBool() << ", " << currentProspectStudents[row].getEssayBool() << ", "
+             << currentProspectStudents[row].getRecommendationBool() << ", " << currentProspectStudents[row].getApprovalBool() << ", "
              << currentProspectStudents[row].getStudentGpa();
+   writeToAdminFile();
+
+}
+//assings data from the spin boxes to an object in the vector
+void mainWidget::on_studentClassEdited(ProspectStudent student, int row)
+{
+    currentProspectStudents[row].setStudentClass(student.getStudentClass());
+    qDebug() << "Student Data AFTER SPIN: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
+             << currentProspectStudents[row].getStudentClass();
     writeToAdminFile();
 }
+
+void mainWidget::on_studentStatusEdited(ProspectStudent student, int row)
+{
+    currentProspectStudents[row].setStudentStatus(student.getStudentStatus());
+
+    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
+             << currentProspectStudents[row].getStudentStatus();
+    writeToAdminFile();
+
+}
+
+
 
 //writes all objects in the current prospect student vector to a file
 void mainWidget::writeToAdminFile()
@@ -711,18 +734,28 @@ void mainWidget::writeToAdminFile()
         {
             currentProspectStudents[i].setApprovalBool(false);
         }
-        if (currentProspectStudents[i].getStudentGpa().size() == 0)
+        if (currentProspectStudents[i].getStudentGpa() > 1)
         {
-            currentProspectStudents[i].setStudentGpa("0");
+            currentProspectStudents[i].setStudentGpa(false);
         }
-    stream << currentProspectStudents[i].getFirstName() << "," << currentProspectStudents[i].getLastName() << ","
+        if (currentProspectStudents[i].getStudentClass() > 100 || currentProspectStudents[i].getStudentClass() < 0)
+        {
+            currentProspectStudents[i].setStudentClass(11);
+        }
+        if (currentProspectStudents[i].getStudentStatus() > 1)
+        {
+            currentProspectStudents[i].setStudentStatus(false);
+        }
+
+        stream << currentProspectStudents[i].getFirstName() << "," << currentProspectStudents[i].getLastName() << ","
                                                    << currentProspectStudents[i].getApplicationBool() << "," << currentProspectStudents[i].getEssayBool() << ","
                                                    << currentProspectStudents[i].getRecommendationBool() << "," << currentProspectStudents[i].getApprovalBool() << ","
-                                                   << currentProspectStudents[i].getStudentGpa() << "," << endl;
+                                                   << currentProspectStudents[i].getStudentGpa() << "," << currentProspectStudents[i].getStudentClass() << ","
+                                                   << currentProspectStudents[i].getStudentStatus() << "," << endl;
     }
 }
 
-//populating the current students table with information from the data file
+//populating the current prospect students table with information from the data file
 void mainWidget::populateCurrentProspectStudentsModel()
 {
     QString filename = "currentprospectstudents.csv";
@@ -770,7 +803,9 @@ void mainWidget::populateCurrentProspectStudentsModel()
                             newRecord.push_back("No");
                             newRecord.push_back("No");
                             newRecord.push_back("No");
-                            newRecord.push_back("0.0");
+                            newRecord.push_back("No");
+                            newRecord.push_back("11");
+                            newRecord.push_back("Applicant");
                             for (int j = 0; j < lineToken.size(); j++)
                             {
                                 currentAdminModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
@@ -780,14 +815,15 @@ void mainWidget::populateCurrentProspectStudentsModel()
                         if (newRecord[1].size() == 0 || newRecord[1] == "0" || (newRecord[1] >= 48 && newRecord[1] <= 57))
                         {
                             qDebug() << "IN 2";
-                            newRecord.clear();
                             newRecord.push_back(" ");
                             newRecord.push_back(" ");
                             newRecord.push_back("No");
                             newRecord.push_back("No");
                             newRecord.push_back("No");
                             newRecord.push_back("No");
-                            newRecord.push_back("0.0");
+                            newRecord.push_back("No");
+                            newRecord.push_back("11");
+                            newRecord.push_back("Applicant");
                             for (int j = 0; j < lineToken.size(); j++)
                             {
                                 currentAdminModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
@@ -797,7 +833,7 @@ void mainWidget::populateCurrentProspectStudentsModel()
 
                   //creating a prospect student object with the information parsed from the file
                   ProspectStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toUInt(), newRecord.at(3).toUInt(), newRecord.at(4).toUInt(),
-                                          newRecord.at(5).toUInt(), newRecord.at(6));
+                                          newRecord.at(5).toUInt(), newRecord.at(6).toUInt(), newRecord.at(7).toInt(), newRecord.at(8).toUInt());
                   currentProspectStudents.push_back(student);
 
                 //converting the boolean value of induction attendance to a string of text displayed to the user
@@ -841,10 +877,30 @@ void mainWidget::populateCurrentProspectStudentsModel()
                     QStandardItem *item = new QStandardItem("Yes");
                     currentAdminModel->setItem(lineindex, 5, item);
                 }
+                if (student.getStudentGpa() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("No");
+                    currentAdminModel->setItem(lineindex, 6, item);
+                }
+                else if (student.getStudentGpa() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Yes");
+                    currentAdminModel->setItem(lineindex, 6, item);
+                }
+                if (student.getStudentStatus() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("Applicant");
+                    currentAdminModel->setItem(lineindex, 8, item);
+                }
+                else if (student.getStudentGpa() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Member");
+                    currentAdminModel->setItem(lineindex, 8, item);
+                }
 
                 qDebug() << "POPULATE PROSPECT STUDENT: " << student.getFirstName() << ", " << student.getLastName() << ", " << student.getApplicationBool() << ", "
                          << student.getEssayBool() << ", " << student.getRecommendationBool() << ", " << student.getApprovalBool() << ", "
-                         << student.getStudentGpa();
+                         << student.getStudentGpa() << ", " << student.getStudentClass() << ", " << student.getStudentStatus();
              }
              catch (const std::out_of_range& e)
              {
@@ -856,7 +912,6 @@ void mainWidget::populateCurrentProspectStudentsModel()
     }
     }
 }
-
 
 
 

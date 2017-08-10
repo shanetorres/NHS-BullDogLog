@@ -11,6 +11,7 @@
 #include <vector>
 #include <QVector>
 #include <QComboBox>
+#include <QSpinBox>
 
 class ProspectStudent;
 
@@ -33,7 +34,9 @@ signals:
 
     void studentComboEdited_2(ProspectStudent, int) const;
 
-    void studentGpaEdited(ProspectStudent, int) const;
+    void studentClassEdited(ProspectStudent, int) const;
+
+    void studentStatusEdited(ProspectStudent, int) const;
 
 
 public slots:

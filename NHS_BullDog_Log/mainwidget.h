@@ -106,7 +106,9 @@ private slots:
 
     void on_studentComboEdited_2(ProspectStudent, int);
 
-    void on_studentGpaEdited(ProspectStudent, int);
+    void on_studentClassEdited(ProspectStudent, int);
+
+    void on_studentStatusEdited(ProspectStudent, int);
 
 private:
     Ui::mainWidget *ui;
@@ -124,7 +126,7 @@ private:
     QVector<QString> eventNames;
     /*~ADMIN RECORDS~*/
     QStandardItemModel* currentAdminModel;
-    const int currentAdminCols = 7;
+    const int currentAdminCols = 9;
     adminDelegate *currentAdminDelegate;
     std::vector<ProspectStudent> currentProspectStudents;
     int totalProspectStudents;

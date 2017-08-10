@@ -19,17 +19,23 @@ QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
         QLineEdit *editor = new QLineEdit(parent);
         return editor;
     }
-    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)
+    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5 || index.column() == 6)
     {
         QComboBox *editor = new QComboBox(parent);
-        editor->addItem("No");
         editor->addItem("Yes");
+        editor->addItem("No");
         return editor;
     }
-    else if (index.column() == 6)
-    {
-        QLineEdit *editor = new QLineEdit(parent);
-        editor->setMaxLength(4);
+    else if (index.column() == 7) {
+        QSpinBox *editor = new QSpinBox(parent);
+        editor->setMinimum(11);
+        editor->setMaximum(12);
+        return editor;
+    }
+    else if (index.column() == 8) {
+        QComboBox *editor = new QComboBox(parent);
+        editor->addItem("Applicant");
+        editor->addItem("Member");
         return editor;
     }
 }
@@ -43,19 +49,22 @@ void adminDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
         lineEdit->setText(value);
     }
-    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)
+    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5 || index.column() == 6)
     {
         QString value = index.model()->data(index, Qt::EditRole).toString();
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         comboBox->setCurrentText(value);
     }
-    else if (index.column() == 6)
-    {
-        QString value = index.model()->data(index, Qt::EditRole).toString();
-        QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
-        lineEdit->setText(value);
+    else if (index.column() == 7) {
+        int value = index.model()->data(index, Qt::EditRole).toInt();
+        QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+        spinBox->setValue(value);
     }
-
+    else if (index.column() == 8) {
+        QString value = index.model()->data(index, Qt::EditRole).toString();
+        QComboBox *comboBox = static_cast<QComboBox*>(editor);
+        comboBox->setCurrentText(value);
+    }
 }
 
 void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -85,16 +94,16 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         emit studentNameEdited_2(student, index.row());
 
     }
-    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5)     //data from combo boxes
+    else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5 || index.column() == 6)     //data from combo boxes
     {
         ProspectStudent student;
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         model->setData(index, comboBox->currentText(), Qt::EditRole);
 
-        QVector<bool> studentRequirements(4);
-        QVector<QString> studentDataString(4);
+        QVector<bool> studentRequirements(5);
+        QVector<QString> studentDataString(5);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 5; i++)
         {
             QModelIndex dataIndex = model->index(index.row(), i + 2, QModelIndex());
             studentDataString[i] = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
@@ -110,27 +119,38 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         student.setEssayBool(studentRequirements[1]);
         student.setRecommendationBool(studentRequirements[2]);
         student.setApprovalBool(studentRequirements[3]);
+        student.setStudentGpa(studentRequirements[4]);
 
-        qDebug() << "COMBOBOX: " << student.getApplicationBool() << " " << student.getEssayBool() << " " << student.getRecommendationBool() << " " << student.getApprovalBool();
+        qDebug() << "COMBOBOX: " << student.getApplicationBool() << " " << student.getEssayBool() << " " << student.getRecommendationBool() << " "
+                 << student.getApprovalBool() << student.getStudentGpa();
 
         emit studentComboEdited_2(student, index.row());
     }
-    else if (index.column() == 6)                       //data from combo box
-    {
+    else if (index.column() == 7) {
         ProspectStudent student;
-        QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
-        QString value = lineEdit->text();
-        model->setData(index,value, Qt::EditRole);
-       //a vector of QStrings saves data at specific cells in the tableView
+        QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+        spinBox->interpretText();
+        int value = spinBox->value();
+        model->setData(index, value, Qt::EditRole);
 
-        QModelIndex dataIndex = model->index(index.row(), 6, QModelIndex());
-        QString studentGpa = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
+        QModelIndex dataIndex = model->index(index.row(), 7, QModelIndex());
+        int studentDataInt = dataIndex.model()->data(dataIndex, Qt::EditRole).toInt();
 
-        student.setStudentGpa(studentGpa);
+        student.setStudentClass(studentDataInt);
 
-        qDebug() << "After" << student.getFirstName() << " " << student.getLastName() << " " << student.getStudentGpa();
+        qDebug() << "SPINBOX: " << student.getStudentClass();
+        emit studentClassEdited(student, index.row());
+    }
+    else if (index.column() == 8) {
+        ProspectStudent student;
+        QComboBox *comboBox = static_cast<QComboBox*>(editor);
+        model->setData(index, comboBox->currentText(), Qt::EditRole);
 
-        emit studentGpaEdited(student, index.row());
+        //sets the bool value of the student's attendance dependent on the selected item of the combo box
+        if (comboBox->currentText() == "Member") { student.setStudentStatus(true); }
+        else if (comboBox->currentText() == "Applicant") { student.setStudentStatus(false); }
+        else { student.setStudentStatus(false); }
+        emit studentStatusEdited(student, index.row());
     }
 
 
@@ -140,3 +160,4 @@ void adminDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionView
 {
     editor->setGeometry(option.rect);
 }
+
