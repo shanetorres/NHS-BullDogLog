@@ -6,9 +6,12 @@
 #include "officerdelegate.h"
 #include "admindelegate.h"
 #include "contributiondelegate.h"
+#include "servicedelegate.h"
 #include "currentstudent.h"
 #include "prospectstudent.h"
 #include "addcontributiondialog.h"
+#include "addmeetingsdialog.h"
+#include "meetingsdelegate.h"
 #include <vector>
 #include <QFile>
 #include <QTextStream>
@@ -54,6 +57,26 @@ public:
 
     void populateCurrentProspectStudentsModel();
 
+    //service projects page
+
+    void initializeServiceModel();
+
+    void populateServiceModel();
+
+    void updateServiceModel();
+
+    void writeToServiceFile();
+
+    //meetings page
+
+    void populateMeetingsModel();
+
+    void initializeMeetingsModel();
+
+    void updateMeetingsModel();
+
+    void writeToMeetingsFile();
+
 private slots:
 
     void on_adminButton_clicked();
@@ -77,6 +100,8 @@ private slots:
     void on_studentSpinEdited(CurrentStudent, int);
 
     void on_studentComboEdited(CurrentStudent, int);
+
+    void on_studentGradeEdited(CurrentStudent, int);
 
     /*~CONTRIBUTIONS TAB~*/
 
@@ -112,11 +137,34 @@ private slots:
 
     //void on_studentNotesEdited(ProspectStudent,int);
 
+    /*~SERVICE PROJECTS TAB~*/
+
+    void on_serveMenuButton_clicked();
+
+    void on_serveAddEventButton_clicked();
+
+    void on_serveDeleteEventButton_clicked();
+
+    void on_serveEventEdited(QString, int, int);
+
+    /*~MEETINGS TAB~*/
+
+    void on_meetingMenuButton_clicked();
+
+    void on_addMeetingButton_clicked();
+
+    void on_deleteMeetingButton_clicked();
+
+    void on_dateAdded(QString);
+
+    void on_meetingComboEdited(bool, int, int);
+
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
     QStandardItemModel* currentStudentsModel;
-    const int currentStudentCols = 6;
+    const int currentStudentCols = 7;
     officerDelegate *currentStudentsDelegate;
     std::vector<CurrentStudent> currentStudents;
     int totalStudents;
@@ -126,11 +174,23 @@ private:
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
+
     /*~ADMIN RECORDS~*/
     QStandardItemModel* currentAdminModel;
     const int currentAdminCols = 10;
     adminDelegate *currentAdminDelegate;
     std::vector<ProspectStudent> currentProspectStudents;
     int totalProspectStudents; 
+
+    /*~SERVICE PROJECTS TAB~*/
+    QStandardItemModel* serviceModel;
+    ServiceDelegate* serviceDelegate;
+    /*~MEETINGS TAB~*/
+    QStandardItemModel* meetingsModel;
+    AddMeetingsDialog* meetingsDialog;
+    QVector<QString> dates;
+    MeetingsDelegate* meetingsDelegate;
+
+
 };
 #endif // MAINWIDGET_H

@@ -7,6 +7,7 @@ AddContributionDialog::AddContributionDialog(QWidget *parent) :
     ui(new Ui::AddContributionDialog)
 {
     ui->setupUi(this);
+    this->setFixedSize(this->width(),this->height());
 }
 
 AddContributionDialog::~AddContributionDialog()

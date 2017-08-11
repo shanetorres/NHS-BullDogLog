@@ -32,7 +32,11 @@ SOURCES += main.cpp\
     contributiondelegate.cpp \
     admindelegate.cpp \
     prospectstudent.cpp \
-    addnotesdialog.cpp
+    addnotesdialog.cpp \
+    servicedelegate.cpp \
+    addmeetingsdialog.cpp \
+    meetingsdelegate.cpp
+
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
@@ -41,12 +45,17 @@ HEADERS  += mainwidget.h \
     addcontributiondialog.h \
     admindelegate.h \
     prospectstudent.h \
-    addnotesdialog.h
+    addnotesdialog.h \
+    servicedelegate.h \
+    addmeetingsdialog.h \
+    meetingsdelegate.h
+
 
 
 FORMS    += mainwidget.ui \
     addcontributiondialog.ui \
-    addnotesdialog.ui
+    addnotesdialog.ui\
+    addmeetingsdialog.ui
 
 RESOURCES += \
     pictures.qrc
@@ -59,7 +68,8 @@ DISTFILES += \
     png files/nhslogo.png \
     png files/nhslogo.png \
     nhslogo.png \
-    nhslogo_a2I_icon.ico
+    nhslogo_a2I_icon.ico\
+    data/serviceprojects.csv
 
 
 
