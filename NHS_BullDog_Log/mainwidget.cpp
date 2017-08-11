@@ -8,6 +8,7 @@
 #include <QModelIndex>
 #include <stdexcept>
 #include <QStandardItem>
+#include <QPushButton>
 #include <QSizePolicy>
 
 mainWidget::mainWidget(QWidget *parent) :
@@ -39,6 +40,7 @@ mainWidget::mainWidget(QWidget *parent) :
     connect(currentAdminDelegate, SIGNAL(studentComboEdited_2(ProspectStudent,int)), this, SLOT(on_studentComboEdited_2(ProspectStudent,int)));
     connect(currentAdminDelegate, SIGNAL(studentClassEdited(ProspectStudent,int)), this, SLOT(on_studentClassEdited(ProspectStudent,int)));
     connect(currentAdminDelegate, SIGNAL(studentStatusEdited(ProspectStudent,int)), this, SLOT(on_studentStatusEdited(ProspectStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentNotesEdited(ProspectStudent,int)), this, SLOT(on_studentNotesEdited(ProspectStudent,int)));
 
 
     //creating the model for all current students and setting resizing parameters for the view
@@ -60,6 +62,7 @@ mainWidget::mainWidget(QWidget *parent) :
     currentAdminModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Gpa")));
     currentAdminModel->setHorizontalHeaderItem(7, new QStandardItem(QString("Class")));
     currentAdminModel->setHorizontalHeaderItem(8, new QStandardItem(QString("Status")));
+    currentAdminModel->setHorizontalHeaderItem(9, new QStandardItem(QString("Notes")));
 
     /*----------------------------OFFICER RECORDS----------------------------*/
 
@@ -629,6 +632,10 @@ void mainWidget::on_offAddStudentButton_2_clicked()
      {
      newRecord.append(new QStandardItem("Applicant"));
      }
+     else if (i == 9)
+     {
+     newRecord.append(new QStandardItem(""));
+     }
    }
    currentAdminModel->appendRow(newRecord);
 
@@ -841,7 +848,7 @@ void mainWidget::populateCurrentProspectStudentsModel()
 
                   //creating a prospect student object with the information parsed from the file
                   ProspectStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toUInt(), newRecord.at(3).toUInt(), newRecord.at(4).toUInt(),
-                                          newRecord.at(5).toUInt(), newRecord.at(6).toUInt(), newRecord.at(7).toInt(), newRecord.at(8).toUInt());
+                                          newRecord.at(5).toUInt(), newRecord.at(6).toUInt(), newRecord.at(7).toInt(), newRecord.at(8).toUInt(), newRecord.at(9));
                   currentProspectStudents.push_back(student);
 
                 //converting the boolean value of induction attendance to a string of text displayed to the user

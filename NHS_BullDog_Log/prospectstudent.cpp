@@ -6,7 +6,7 @@ ProspectStudent::ProspectStudent()
 }
 
 //default constructor assigns all inputted data to data members of the class via the set functions
-ProspectStudent::ProspectStudent(QString first, QString last, bool app, bool ess, bool rec, bool boa, bool gpa, int cla, bool sta)
+ProspectStudent::ProspectStudent(QString first, QString last, bool app, bool ess, bool rec, bool boa, bool gpa, int cla, bool sta, QString notes)
 {
     setFirstName(first);
     setLastName(last);
@@ -17,6 +17,7 @@ ProspectStudent::ProspectStudent(QString first, QString last, bool app, bool ess
     setStudentGpa(gpa);
     setStudentClass(cla);
     setStudentStatus(sta);
+    setStudentNotes(notes);
 }
 
 void ProspectStudent::setFirstName(QString first) { firstName = first; }
@@ -45,3 +46,6 @@ int ProspectStudent::getStudentClass() { return studentClass; }
 
 void ProspectStudent::setStudentStatus(bool sta) { studentStatus = sta; }
 bool ProspectStudent::getStudentStatus() { return studentStatus; }
+
+void ProspectStudent::setStudentNotes(QString notes) { studentNotes = notes; }
+QString ProspectStudent::getStudentNotes() { return studentNotes; }

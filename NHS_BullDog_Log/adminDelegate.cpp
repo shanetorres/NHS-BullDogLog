@@ -10,7 +10,7 @@ adminDelegate::adminDelegate(QObject *parent) : QItemDelegate(parent)
 
 }
 
-QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
+QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index, addNotesDialog *addNotes) const
 {
 
     //control statement determines which editor to create and return depenedent on the column number
@@ -38,7 +38,13 @@ QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
         editor->addItem("Member");
         return editor;
     }
+    else if (index.column() == 9) {
+        QPushButton *editor = new QPushButton(parent);
+        editor->setText("Notes");
+        return editor;
+    }
 }
+
 
 void adminDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
 {

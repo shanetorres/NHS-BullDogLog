@@ -10,7 +10,7 @@ class ProspectStudent
 {
 public:
     ProspectStudent();
-    ProspectStudent(QString, QString, bool, bool, bool, bool, bool, int, bool);
+    ProspectStudent(QString, QString, bool, bool, bool, bool, bool, int, bool, QString);
 
     void setFirstName(QString);
     QString getFirstName();
@@ -39,6 +39,9 @@ public:
     void setStudentStatus(bool);
     bool getStudentStatus();
 
+    void setStudentNotes(QString);
+    QString getStudentNotes();
+
 private:
     QString firstName;
     QString lastName;
@@ -49,6 +52,7 @@ private:
     bool studentGpa;
     int studentClass;
     bool studentStatus;
+    QString studentNotes;
 };
 
 #endif // PROSPECTSTUDENT_H

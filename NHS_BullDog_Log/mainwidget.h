@@ -126,9 +126,9 @@ private:
     QVector<QString> eventNames;
     /*~ADMIN RECORDS~*/
     QStandardItemModel* currentAdminModel;
-    const int currentAdminCols = 9;
+    const int currentAdminCols = 10;
     adminDelegate *currentAdminDelegate;
     std::vector<ProspectStudent> currentProspectStudents;
-    int totalProspectStudents;
+    int totalProspectStudents; 
 };
 #endif // MAINWIDGET_H

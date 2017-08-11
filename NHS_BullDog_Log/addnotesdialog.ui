@@ -1,9 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <author/>
- <comment/>
- <exportmacro/>
- <class>notes</class>
- <widget class="QDialog" name="notes">
+ <class>addNotesDialog</class>
+ <widget class="QDialog" name="addNotesDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -19,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>240</y>
+     <y>250</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -31,14 +29,23 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
+  <widget class="QLineEdit" name="notesEdit">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>351</width>
+     <height>211</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
- <pixmapfunction/>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>notes</receiver>
+   <receiver>addNotesDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -54,7 +61,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>notes</receiver>
+   <receiver>addNotesDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

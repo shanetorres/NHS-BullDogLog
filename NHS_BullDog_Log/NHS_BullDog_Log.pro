@@ -32,7 +32,7 @@ SOURCES += main.cpp\
     contributiondelegate.cpp \
     admindelegate.cpp \
     prospectstudent.cpp \
-    notes.cpp
+    addnotesdialog.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
@@ -41,12 +41,12 @@ HEADERS  += mainwidget.h \
     addcontributiondialog.h \
     admindelegate.h \
     prospectstudent.h \
-    notes.h
+    addnotesdialog.h
 
 
 FORMS    += mainwidget.ui \
     addcontributiondialog.ui \
-    notes.ui
+    addnotesdialog.ui
 
 RESOURCES += \
     pictures.qrc

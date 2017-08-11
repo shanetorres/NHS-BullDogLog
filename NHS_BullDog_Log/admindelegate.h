@@ -8,10 +8,12 @@
 #include <QLineEdit>
 #include <QString>
 #include "prospectstudent.h"
+#include "addnotesdialog.h"
 #include <vector>
 #include <QVector>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QPushButton>
 
 class ProspectStudent;
 
@@ -42,6 +44,7 @@ signals:
 public slots:
 
 private:
+     addNotesDialog *addNotes;
 
 };
 
