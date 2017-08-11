@@ -8,6 +8,8 @@
 #include <QModelIndex>
 #include <stdexcept>
 #include <QStandardItem>
+#include <QPushButton>
+#include <QSizePolicy>
 #include <QSortFilterProxyModel>
 
 mainWidget::mainWidget(QWidget *parent) :
@@ -16,12 +18,52 @@ mainWidget::mainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+     /*----------------------------GRAPHICS------------------------------*/
+
+    this->setWindowTitle("NHS Bulldog Log");
+    this->setWindowIcon(QIcon(":/nhslogo_a2I_icon.ico"));
+
+    //this->setStyleSheet("background-color: blue;");
+    //ui->groupBox_2->setStyleSheet("background-color: white; border-color: black;");
+    //ui->currentTableView_2->setStyleSheet("background-color: white; border-color: black;");
+
+    QImage image(":/nhslogo.png");
+    QImage image2 = image.scaled(400, 600, Qt::KeepAspectRatio);
+    ui->label->setPixmap(QPixmap::fromImage(image2));
+
     /*----------------------------ADMIN RECORDS------------------------------*/
 
+    //instantiating the custom delegate
+    currentAdminDelegate = new adminDelegate(this);
+
+    //connecting all delegate signals to desired slots on the mainwidget
+    connect(currentAdminDelegate, SIGNAL(studentNameEdited_2(ProspectStudent, int)), this, SLOT(on_studentNameEdited_2(ProspectStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentComboEdited_2(ProspectStudent,int)), this, SLOT(on_studentComboEdited_2(ProspectStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentClassEdited(ProspectStudent,int)), this, SLOT(on_studentClassEdited(ProspectStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentStatusEdited(ProspectStudent,int)), this, SLOT(on_studentStatusEdited(ProspectStudent,int)));
+    //connect(currentAdminDelegate, SIGNAL(studentNotesEdited(ProspectStudent,int)), this, SLOT(on_studentNotesEdited(ProspectStudent,int)));
 
 
+    //creating the model for all current students and setting resizing parameters for the view
+    currentAdminModel = new QStandardItemModel(this);
+    populateCurrentProspectStudentsModel();
+    ui->currentTableView_2->setModel(currentAdminModel);
+    ui->currentTableView_2->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    //assigning the custom delegate to the view
+    ui->currentTableView_2->setItemDelegate(currentAdminDelegate);
 
+    //setting the header text of the model
+    currentAdminModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
+    currentAdminModel->setHorizontalHeaderItem(1, new QStandardItem(QString("Last Name")));
+    currentAdminModel->setHorizontalHeaderItem(2, new QStandardItem(QString("Application")));
+    currentAdminModel->setHorizontalHeaderItem(3, new QStandardItem(QString("Essay")));
+    currentAdminModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Teacher Recommendations")));
+    currentAdminModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Board Approval")));
+    currentAdminModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Gpa")));
+    currentAdminModel->setHorizontalHeaderItem(7, new QStandardItem(QString("Class")));
+    currentAdminModel->setHorizontalHeaderItem(8, new QStandardItem(QString("Status")));
+    currentAdminModel->setHorizontalHeaderItem(9, new QStandardItem(QString("Notes")));
 
     /*----------------------------OFFICER RECORDS----------------------------*/
 
@@ -143,7 +185,7 @@ void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
 /*---------------------OVERALL TAB ON OFFICER PAGE--------------------*/
 
-void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); }
+void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
 
 void mainWidget::on_offAddStudentButton_clicked()
 {
@@ -353,7 +395,7 @@ void mainWidget::populateCurrentStudentsModel()
                     if (newRecord.size() > 0)
                     {
 
-                        if (newRecord[0].size() == 0 || newRecord[0] == "0" || newRecord[0] >= 48 && newRecord[0] <= 57)
+                        if (newRecord[0].size() == 0 || newRecord[0] == "0" || (newRecord[0] >= 48 && newRecord[0] <= 57))
                         {
                             qDebug() << "IN";
                             newRecord.clear();
@@ -370,7 +412,7 @@ void mainWidget::populateCurrentStudentsModel()
                             }
 
                         }
-                        if (newRecord[1].size() == 0 || newRecord[1] == "0" || newRecord[1] >= 48 && newRecord[1] <= 57)
+                        if (newRecord[1].size() == 0 || newRecord[1] == "0" || (newRecord[1] >= 48 && newRecord[1] <= 57))
                         {
                             qDebug() << "IN 2";
                             newRecord.clear();
@@ -942,12 +984,324 @@ void mainWidget::populateMeetingsModel()
 /*------------------END MEETINGS TAB ON OFFICER RECORDS------------------*/
 
 
+/*~~~~~~~~~~~~~~~~~~~ADMIN RECORDS BEGIN~~~~~~~~~~~~~~~~~*/
+
+void mainWidget::on_offMenuButton_2_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
+
+void mainWidget::on_offAddStudentButton_2_clicked()
+{
+    //inserts a blank record with 9 columns to be edited
+   QList<QStandardItem *> newRecord;
+   for (int i = 0; i < currentAdminCols; i++)
+   {
+     if (i == 0 || i ==1)
+     {
+     newRecord.append(new QStandardItem(" "));
+     }
+     else if (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)
+     {
+     newRecord.append(new QStandardItem("No"));
+     }
+     else if (i == 7)
+     {
+     newRecord.append(new QStandardItem(" "));
+     }
+     else if (i == 8)
+     {
+     newRecord.append(new QStandardItem("Applicant"));
+     }
+     else if (i == 9)
+     {
+     newRecord.append(new QStandardItem("Notes"));
+     }
+   }
+   currentAdminModel->appendRow(newRecord);
+
+   ProspectStudent student;
+   currentProspectStudents.push_back(student);
+
+   totalProspectStudents++;
+}
+
+void mainWidget::on_offDeleteStudentButton_2_clicked()
+{
+    disableButtons();
+
+    //Message box confirms whether or not the record should be deleted
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Delete Student",
+                 "Are you sure you want to delete this student?", QMessageBox::Yes | QMessageBox::No);
+
+    if (reply == QMessageBox::Yes) {
+        adminDeleteRecord();
+    }
+    else {
+        enableButtons();
+    }
+}
+
+//deletes the selected record from the view as well as from the vector
+void mainWidget::adminDeleteRecord()
+{
+    //removes current student from vector
+    if (totalProspectStudents != 0)
+    {
+        currentProspectStudents.erase(currentProspectStudents.begin()+ui->currentTableView_2->currentIndex().row());
+        totalStudents--;
+    }
+    currentAdminModel->removeRows(ui->currentTableView_2->currentIndex().row(),1);
+    enableButtons();
+    writeToAdminFile();
+}
+
+//assings data from line edits to an object in the vector based on the row number
+void mainWidget::on_studentNameEdited_2(ProspectStudent student, int row)
+{
+    qDebug() << "IN";
+    currentProspectStudents[row].setFirstName(student.getFirstName());
+    currentProspectStudents[row].setLastName(student.getLastName());
+
+    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName();
+    writeToAdminFile();
+
+}
+
+//assings data from the combo box to an object in the vector
+void mainWidget::on_studentComboEdited_2(ProspectStudent student, int row)
+{
+    currentProspectStudents[row].setApplicationBool(student.getApplicationBool());
+    currentProspectStudents[row].setEssayBool(student.getEssayBool());
+    currentProspectStudents[row].setRecommendationBool(student.getRecommendationBool());
+    currentProspectStudents[row].setApprovalBool(student.getApprovalBool());
+    currentProspectStudents[row].setStudentGpa(student.getStudentGpa());
+
+    qDebug() << "REQUIREMENTS: " << currentProspectStudents[row].getApplicationBool() << ", " << currentProspectStudents[row].getEssayBool() << ", "
+             << currentProspectStudents[row].getRecommendationBool() << ", " << currentProspectStudents[row].getApprovalBool() << ", "
+             << currentProspectStudents[row].getStudentGpa();
+   writeToAdminFile();
+
+}
+//assings data from the spin boxes to an object in the vector
+void mainWidget::on_studentClassEdited(ProspectStudent student, int row)
+{
+    currentProspectStudents[row].setStudentClass(student.getStudentClass());
+    qDebug() << "Student Data AFTER SPIN: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
+             << currentProspectStudents[row].getStudentClass();
+    writeToAdminFile();
+}
+
+void mainWidget::on_studentStatusEdited(ProspectStudent student, int row)
+{
+    currentProspectStudents[row].setStudentStatus(student.getStudentStatus());
+
+    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
+             << currentProspectStudents[row].getStudentStatus();
+    writeToAdminFile();
+
+}
 
 
 
+//writes all objects in the current prospect student vector to a file
+void mainWidget::writeToAdminFile()
+{
 
+    QString filename = "currentprospectstudents.csv";
+    QFile file(filename);
+    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
+    QTextStream stream(&file);
 
+    for (int i = 0; i < currentProspectStudents.size(); i++) {
+        if (currentProspectStudents[i].getApplicationBool() > 1)
+        {
+            currentProspectStudents[i].setApplicationBool(false);
+        }
+        if (currentProspectStudents[i].getEssayBool() > 1)
+        {
+            currentProspectStudents[i].setEssayBool(false);
+        }
+        if (currentProspectStudents[i].getRecommendationBool() > 1)
+        {
+            currentProspectStudents[i].setRecommendationBool(false);
+        }
+        if (currentProspectStudents[i].getApprovalBool() > 1)
+        {
+            currentProspectStudents[i].setApprovalBool(false);
+        }
+        if (currentProspectStudents[i].getStudentGpa() > 1)
+        {
+            currentProspectStudents[i].setStudentGpa(false);
+        }
+        if (currentProspectStudents[i].getStudentClass() > 100 || currentProspectStudents[i].getStudentClass() < 0)
+        {
+            currentProspectStudents[i].setStudentClass(11);
+        }
+        if (currentProspectStudents[i].getStudentStatus() > 1)
+        {
+            currentProspectStudents[i].setStudentStatus(false);
+        }
 
+        stream << currentProspectStudents[i].getFirstName() << "," << currentProspectStudents[i].getLastName() << ","
+                                                   << currentProspectStudents[i].getApplicationBool() << "," << currentProspectStudents[i].getEssayBool() << ","
+                                                   << currentProspectStudents[i].getRecommendationBool() << "," << currentProspectStudents[i].getApprovalBool() << ","
+                                                   << currentProspectStudents[i].getStudentGpa() << "," << currentProspectStudents[i].getStudentClass() << ","
+                                                   << currentProspectStudents[i].getStudentStatus() << "," << endl;
+    }
+}
 
+//populating the current prospect students table with information from the data file
+void mainWidget::populateCurrentProspectStudentsModel()
+{
+    QString filename = "currentprospectstudents.csv";
+    QFile file(filename);
 
+    if(file.open(QIODevice::ReadOnly))
+    {
+        int lineindex = 0;                     // file line counter
+        QTextStream input(&file);                 // read to text stream
+        if (file.size() < 10)
+        {
+            qDebug() << "FILE IS EMPTY";
 
+        }
+        else
+        {
+            while (!input.atEnd())
+            {
+                std::vector<QString> newRecord;
+                // read one line from textstream(separated by "\n")
+                QString fileLine = input.readLine();
+
+                // parse the read line into separate pieces(tokens) with "," as the delimiter
+                QStringList lineToken = fileLine.split(",", QString::SkipEmptyParts);
+
+                // load parsed data to model accordingly
+                try {
+                    for (int i = 0; i < lineToken.size(); i++)
+                    {
+                        QString value = lineToken.at(i);
+                        newRecord.push_back(value);
+                        QStandardItem *item = new QStandardItem(value);
+                        currentAdminModel->setItem(lineindex, i, item);
+                    }
+                    //this whole block of if statements is a validation test that eliminates faulty records that could cause out of bounds errors
+                    if (newRecord.size() > 0)
+                    {
+
+                        if (newRecord[0].size() == 0 || newRecord[0] == "0" || (newRecord[0] >= 48 && newRecord[0] <= 57))
+                        {
+                            qDebug() << "IN";
+                            newRecord.push_back(" ");
+                            newRecord.push_back(" ");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("11");
+                            newRecord.push_back("Applicant");
+                            for (int j = 0; j < lineToken.size(); j++)
+                            {
+                                currentAdminModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                            }
+
+                        }
+                        if (newRecord[1].size() == 0 || newRecord[1] == "0" || (newRecord[1] >= 48 && newRecord[1] <= 57))
+                        {
+                            qDebug() << "IN 2";
+                            newRecord.push_back(" ");
+                            newRecord.push_back(" ");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("No");
+                            newRecord.push_back("11");
+                            newRecord.push_back("Applicant");
+                            for (int j = 0; j < lineToken.size(); j++)
+                            {
+                                currentAdminModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
+                            }
+                        }
+                      }
+
+                  //creating a prospect student object with the information parsed from the file
+                  ProspectStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toUInt(), newRecord.at(3).toUInt(), newRecord.at(4).toUInt(),
+                                          newRecord.at(5).toUInt(), newRecord.at(6).toUInt(), newRecord.at(7).toInt(), newRecord.at(8).toUInt(), newRecord.at(9));
+                  currentProspectStudents.push_back(student);
+
+                //converting the boolean value of induction attendance to a string of text displayed to the user
+                if (student.getApplicationBool() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("No");
+                    currentAdminModel->setItem(lineindex, 2, item);
+                }
+                else if (student.getApplicationBool() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Yes");
+                    currentAdminModel->setItem(lineindex, 2, item);
+                }
+                if (student.getEssayBool() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("No");
+                    currentAdminModel->setItem(lineindex, 3, item);
+                }
+                else if (student.getEssayBool() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Yes");
+                    currentAdminModel->setItem(lineindex, 3, item);
+                }
+                if (student.getRecommendationBool() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("No");
+                    currentAdminModel->setItem(lineindex, 4, item);
+                }
+                else if (student.getRecommendationBool() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Yes");
+                    currentAdminModel->setItem(lineindex, 4, item);
+                }
+                if (student.getApprovalBool() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("No");
+                    currentAdminModel->setItem(lineindex, 5, item);
+                }
+                else if (student.getApprovalBool() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Yes");
+                    currentAdminModel->setItem(lineindex, 5, item);
+                }
+                if (student.getStudentGpa() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("No");
+                    currentAdminModel->setItem(lineindex, 6, item);
+                }
+                else if (student.getStudentGpa() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Yes");
+                    currentAdminModel->setItem(lineindex, 6, item);
+                }
+                if (student.getStudentStatus() == 0)
+                {
+                    QStandardItem *item = new QStandardItem("Applicant");
+                    currentAdminModel->setItem(lineindex, 8, item);
+                }
+                else if (student.getStudentGpa() == 1)
+                {
+                    QStandardItem *item = new QStandardItem("Member");
+                    currentAdminModel->setItem(lineindex, 8, item);
+                }
+
+                qDebug() << "POPULATE PROSPECT STUDENT: " << student.getFirstName() << ", " << student.getLastName() << ", " << student.getApplicationBool() << ", "
+                         << student.getEssayBool() << ", " << student.getRecommendationBool() << ", " << student.getApprovalBool() << ", "
+                         << student.getStudentGpa() << ", " << student.getStudentClass() << ", " << student.getStudentStatus();
+             }
+             catch (const std::out_of_range& e)
+             {
+                    qDebug() << "OUT OF RANGE ERROR: " << e.what();
+             }
+
+            lineindex++;
+        }
+    }
+    }
+}

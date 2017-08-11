@@ -1,3 +1,6 @@
 <RCC>
-    <qresource prefix="/"/>
+    <qresource prefix="/">
+        <file>nhslogo.png</file>
+        <file>nhslogo_a2I_icon.ico</file>
+    </qresource>
 </RCC>
