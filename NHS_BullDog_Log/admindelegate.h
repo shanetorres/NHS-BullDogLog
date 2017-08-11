@@ -14,6 +14,7 @@
 #include <QComboBox>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QLabel>
 
 class ProspectStudent;
 

@@ -10,7 +10,7 @@ adminDelegate::adminDelegate(QObject *parent) : QItemDelegate(parent)
 
 }
 
-QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index, addNotesDialog *addNotes) const
+QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
 
     //control statement determines which editor to create and return depenedent on the column number
@@ -39,8 +39,7 @@ QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
         return editor;
     }
     else if (index.column() == 9) {
-        QPushButton *editor = new QPushButton(parent);
-        editor->setText("Notes");
+        QLineEdit *editor = new QLineEdit(parent);
         return editor;
     }
 }
@@ -158,8 +157,6 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         else { student.setStudentStatus(false); }
         emit studentStatusEdited(student, index.row());
     }
-
-
 }
 
 void adminDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const

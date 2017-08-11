@@ -110,6 +110,8 @@ private slots:
 
     void on_studentStatusEdited(ProspectStudent, int);
 
+    //void on_studentNotesEdited(ProspectStudent,int);
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/

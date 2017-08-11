@@ -22,7 +22,7 @@ mainWidget::mainWidget(QWidget *parent) :
     this->setWindowTitle("NHS Bulldog Log");
     this->setWindowIcon(QIcon(":/nhslogo_a2I_icon.ico"));
 
-    //this->setStyleSheet("background-color: cyan;");
+    //this->setStyleSheet("background-color: blue;");
     //ui->groupBox_2->setStyleSheet("background-color: white; border-color: black;");
     //ui->currentTableView_2->setStyleSheet("background-color: white; border-color: black;");
 
@@ -40,7 +40,7 @@ mainWidget::mainWidget(QWidget *parent) :
     connect(currentAdminDelegate, SIGNAL(studentComboEdited_2(ProspectStudent,int)), this, SLOT(on_studentComboEdited_2(ProspectStudent,int)));
     connect(currentAdminDelegate, SIGNAL(studentClassEdited(ProspectStudent,int)), this, SLOT(on_studentClassEdited(ProspectStudent,int)));
     connect(currentAdminDelegate, SIGNAL(studentStatusEdited(ProspectStudent,int)), this, SLOT(on_studentStatusEdited(ProspectStudent,int)));
-    connect(currentAdminDelegate, SIGNAL(studentNotesEdited(ProspectStudent,int)), this, SLOT(on_studentNotesEdited(ProspectStudent,int)));
+    //connect(currentAdminDelegate, SIGNAL(studentNotesEdited(ProspectStudent,int)), this, SLOT(on_studentNotesEdited(ProspectStudent,int)));
 
 
     //creating the model for all current students and setting resizing parameters for the view
@@ -634,7 +634,7 @@ void mainWidget::on_offAddStudentButton_2_clicked()
      }
      else if (i == 9)
      {
-     newRecord.append(new QStandardItem(""));
+     newRecord.append(new QStandardItem("Notes"));
      }
    }
    currentAdminModel->appendRow(newRecord);
