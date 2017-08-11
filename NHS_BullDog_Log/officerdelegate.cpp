@@ -37,6 +37,13 @@ QWidget *officerDelegate::createEditor(QWidget *parent, const QStyleOptionViewIt
         }
         return editor;
     }
+    else if (index.column() == 6)
+    {
+        QSpinBox *editor = new QSpinBox(parent);
+        editor->setMinimum(11);
+        editor->setMaximum(12);
+        return editor;
+    }
 }
 
 void officerDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
@@ -60,7 +67,12 @@ void officerDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         comboBox->setCurrentText(value);
     }
-
+    else if (index.column() == 6)
+    {
+        int value = index.model()->data(index, Qt::EditRole).toInt();
+        QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+        spinBox->setValue(value);
+    }
 }
 
 void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -129,7 +141,25 @@ void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
         else { student.setInductionAttendance(false); }
         emit studentComboEdited(student, index.row());
     }
+    else if (index.column() == 6)
+    {
+        CurrentStudent student;
+        QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+        spinBox->interpretText();
+        int value = spinBox->value();
+        model->setData(index, value, Qt::EditRole);
 
+        int studentGrade;
+
+
+            QModelIndex dataIndex = model->index(index.row(), 6, QModelIndex());
+            studentGrade = dataIndex.model()->data(dataIndex, Qt::EditRole).toInt();
+
+        student.setGradeLevel(studentGrade);
+
+        qDebug() << "SPINBOX: " << student.getGradeLevel();
+        emit studentGradeEdited(student, index.row());
+    }
 
 }
 
