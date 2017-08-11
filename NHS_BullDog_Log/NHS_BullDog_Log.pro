@@ -30,22 +30,31 @@ SOURCES += main.cpp\
     currentstudent.cpp \
     addcontributiondialog.cpp \
     contributiondelegate.cpp \
+    admindelegate.cpp \
+    prospectstudent.cpp \
+    addnotesdialog.cpp \
     servicedelegate.cpp \
     addmeetingsdialog.cpp \
     meetingsdelegate.cpp
+
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
     currentstudent.h \
     contributiondelegate.h \
     addcontributiondialog.h \
+    admindelegate.h \
+    prospectstudent.h \
+    addnotesdialog.h \
     servicedelegate.h \
     addmeetingsdialog.h \
     meetingsdelegate.h
 
 
+
 FORMS    += mainwidget.ui \
     addcontributiondialog.ui \
+    addnotesdialog.ui\
     addmeetingsdialog.ui
 
 RESOURCES += \
@@ -54,6 +63,12 @@ RESOURCES += \
 DISTFILES += \
     data/currentstudents.csv \
     data/contributions.csv \
+    data/currentprospectstudents.csv \
+    ../../../../Desktop/nhslogo.png \
+    png files/nhslogo.png \
+    png files/nhslogo.png \
+    nhslogo.png \
+    nhslogo_a2I_icon.ico\
     data/serviceprojects.csv
 
 

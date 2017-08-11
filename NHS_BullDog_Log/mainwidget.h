@@ -4,9 +4,11 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include "officerdelegate.h"
+#include "admindelegate.h"
 #include "contributiondelegate.h"
 #include "servicedelegate.h"
 #include "currentstudent.h"
+#include "prospectstudent.h"
 #include "addcontributiondialog.h"
 #include "addmeetingsdialog.h"
 #include "meetingsdelegate.h"
@@ -46,6 +48,14 @@ public:
     void writeToContributionsFile();
 
     void populateContributionsModel();
+
+    //admin records
+
+    void adminDeleteRecord();
+
+    void writeToAdminFile();
+
+    void populateCurrentProspectStudentsModel();
 
     //service projects page
 
@@ -107,6 +117,26 @@ private slots:
 
     void on_eventEdited(QString, int, int);
 
+    //ADMIN RECORDS
+
+    void on_offMenuButton_2_clicked();
+
+    void on_offAddStudentButton_2_clicked();
+
+    void on_offDeleteStudentButton_2_clicked();
+
+    //ADMIN SIGNALS
+
+    void on_studentNameEdited_2(ProspectStudent, int);
+
+    void on_studentComboEdited_2(ProspectStudent, int);
+
+    void on_studentClassEdited(ProspectStudent, int);
+
+    void on_studentStatusEdited(ProspectStudent, int);
+
+    //void on_studentNotesEdited(ProspectStudent,int);
+
     /*~SERVICE PROJECTS TAB~*/
 
     void on_serveMenuButton_clicked();
@@ -129,6 +159,7 @@ private slots:
 
     void on_meetingComboEdited(bool, int, int);
 
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
@@ -143,6 +174,14 @@ private:
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
+
+    /*~ADMIN RECORDS~*/
+    QStandardItemModel* currentAdminModel;
+    const int currentAdminCols = 10;
+    adminDelegate *currentAdminDelegate;
+    std::vector<ProspectStudent> currentProspectStudents;
+    int totalProspectStudents; 
+
     /*~SERVICE PROJECTS TAB~*/
     QStandardItemModel* serviceModel;
     ServiceDelegate* serviceDelegate;
@@ -151,6 +190,7 @@ private:
     AddMeetingsDialog* meetingsDialog;
     QVector<QString> dates;
     MeetingsDelegate* meetingsDelegate;
+
 
 };
 #endif // MAINWIDGET_H
