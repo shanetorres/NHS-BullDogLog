@@ -112,6 +112,18 @@ mainWidget::mainWidget(QWidget *parent) :
 
     /*<END SERVICE PROJECTS PAGE>*/
 
+    /*<MEETINGS PAGE>*/
+
+    meetingsModel = new QStandardItemModel(this);
+    meetingsDialog = new AddMeetingsDialog(this);
+
+    connect(meetingsDialog, SIGNAL(dateAdded(QString)), this, SLOT(on_dateAdded(QString)));
+
+    ui->meetingsTableView->setModel(meetingsModel);
+    populateMeetingsModel();
+
+    /*<END MEETINGS PAGE>*/
+
 }
 
 mainWidget::~mainWidget()
@@ -191,6 +203,7 @@ void mainWidget::officerDeleteRecord()
     writeToFile();
     updateContributionsModel();
     updateServiceModel();
+    updateMeetingsModel();
 }
 
 //enables buttons on officer page for clicking
@@ -226,6 +239,7 @@ void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
     qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
     updateContributionsModel();
     updateServiceModel();
+    updateMeetingsModel();
     writeToFile();
 }
 
@@ -830,7 +844,103 @@ void mainWidget::populateServiceModel()
     }
 }
 
-/*~~~~~~~~~~~~~~~~~~~SERVICE PROJECTS RECORDS END~~~~~~~~~~~~~~~~~*/
+/*~~~~~~~~~~~~~~~~~~~SERVICE PROJECTS TAB ENDS~~~~~~~~~~~~~~~~~*/
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+/*------------------MEETINGS TAB ON OFFICER RECORDS------------------*/
+
+
+void mainWidget::on_meetingMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); }
+
+void mainWidget::on_addMeetingButton_clicked()
+{
+    disableButtons();
+    meetingsDialog->show();
+}
+
+void mainWidget::on_deleteMeetingButton_clicked()
+{
+
+}
+
+void mainWidget::on_dateAdded(QString date)
+{
+
+    QList<QStandardItem*> newRecord;
+    dates.push_back(date);
+    meetingsDialog->close();
+    enableButtons();
+    for (int i = 0; i < currentStudents.size(); i++)
+    {
+        QString newEvent = " ";
+        currentStudents[i].setStudentEvent(newEvent);
+        currentStudents[i].setServeEvent(newEvent);
+        newRecord.append(new QStandardItem(""));
+    }
+    meetingsModel->appendColumn(newRecord);
+    meetingsModel->setHorizontalHeaderItem(dates.size() + 1, new QStandardItem(date));
+}
+
+void mainWidget::initializeMeetingsModel()
+{
+    ui->meetingsTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    //setting the header text of the contributions model
+    meetingsModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
+    meetingsModel->setHorizontalHeaderItem(1, new QStandardItem(QString("Last Name")));
+}
+
+void mainWidget::updateMeetingsModel()
+{
+    meetingsModel->clear();
+    initializeMeetingsModel();
+    for (int i = 0; i < currentStudents.size(); i++)
+    {
+        QList<QStandardItem*> fullName;
+        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
+        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+        fullName.append(first);
+        fullName.append(last);
+//        for (int j = 0; j < eventNames.size(); j++)
+//        {
+//            serviceModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
+//            fullName.append(new QStandardItem(currentStudents[i].getServeEvent(j)));
+//        }
+        meetingsModel->appendRow(fullName);
+    }
+}
+
+void mainWidget::populateMeetingsModel()
+{
+    meetingsModel->clear();
+    initializeMeetingsModel();
+    for (int i = 0; i < currentStudents.size(); i++)
+    {
+        QList<QStandardItem*> fullName;
+        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
+        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+        fullName.append(first);
+        fullName.append(last);
+//        for (int j = 0; j < eventNames.size(); j++)
+//        {
+//            meetingsModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
+//            fullName.append(new QStandardItem(currentStudents[i].getServeEvent(j)));
+//        }
+        meetingsModel->appendRow(fullName);
+    }
+}
+
+/*------------------END MEETINGS TAB ON OFFICER RECORDS------------------*/
+
+
+
+
+
 
 
 

@@ -30,18 +30,21 @@ SOURCES += main.cpp\
     currentstudent.cpp \
     addcontributiondialog.cpp \
     contributiondelegate.cpp \
-    servicedelegate.cpp
+    servicedelegate.cpp \
+    addmeetingsdialog.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
     currentstudent.h \
     contributiondelegate.h \
     addcontributiondialog.h \
-    servicedelegate.h
+    servicedelegate.h \
+    addmeetingsdialog.h
 
 
 FORMS    += mainwidget.ui \
-    addcontributiondialog.ui
+    addcontributiondialog.ui \
+    addmeetingsdialog.ui
 
 RESOURCES += \
     pictures.qrc

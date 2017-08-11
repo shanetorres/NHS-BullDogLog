@@ -55,6 +55,7 @@ private:
     int gradeLevel;
     QVector<QString> studentEvents;
     QVector<QString> serveEvents;
+    QVector<bool> meetingsBool;
 };
 
 #endif // CURRENTSTUDENT_H

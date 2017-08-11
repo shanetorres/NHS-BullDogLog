@@ -8,6 +8,7 @@
 #include "servicedelegate.h"
 #include "currentstudent.h"
 #include "addcontributiondialog.h"
+#include "addmeetingsdialog.h"
 #include <vector>
 #include <QFile>
 #include <QTextStream>
@@ -55,6 +56,16 @@ public:
 
     void writeToServiceFile();
 
+    //meetings page
+
+    void populateMeetingsModel();
+
+    void initializeMeetingsModel();
+
+    void updateMeetingsModel();
+
+    void writeToMeetingsFile();
+
 private slots:
 
     void on_adminButton_clicked();
@@ -95,7 +106,7 @@ private slots:
 
     void on_eventEdited(QString, int, int);
 
-    /*SERVICE PROJECTS TAB*/
+    /*~SERVICE PROJECTS TAB~*/
 
     void on_serveMenuButton_clicked();
 
@@ -104,6 +115,16 @@ private slots:
     void on_serveDeleteEventButton_clicked();
 
     void on_serveEventEdited(QString, int, int);
+
+    /*~MEETINGS TAB~*/
+
+    void on_meetingMenuButton_clicked();
+
+    void on_addMeetingButton_clicked();
+
+    void on_deleteMeetingButton_clicked();
+
+    void on_dateAdded(QString);
 
 private:
     Ui::mainWidget *ui;
@@ -122,6 +143,10 @@ private:
     /*~SERVICE PROJECTS TAB~*/
     QStandardItemModel* serviceModel;
     ServiceDelegate* serviceDelegate;
+    /*~MEETINGS TAB~*/
+    QStandardItemModel* meetingsModel;
+    AddMeetingsDialog* meetingsDialog;
+    QVector<QString> dates;
 
 };
 #endif // MAINWIDGET_H
