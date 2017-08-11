@@ -45,6 +45,9 @@ public:
     void setServeVector(QVector<QString>);
     QVector<QString> getServeVector();
 
+    void setMeetingsBool(QVector<bool>);
+    QVector<bool> getMeetingsBool();
+
 private:
     QString firstName;
     QString lastName;

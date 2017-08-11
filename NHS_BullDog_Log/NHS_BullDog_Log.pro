@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     addcontributiondialog.cpp \
     contributiondelegate.cpp \
     servicedelegate.cpp \
-    addmeetingsdialog.cpp
+    addmeetingsdialog.cpp \
+    meetingsdelegate.cpp
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
@@ -39,7 +40,8 @@ HEADERS  += mainwidget.h \
     contributiondelegate.h \
     addcontributiondialog.h \
     servicedelegate.h \
-    addmeetingsdialog.h
+    addmeetingsdialog.h \
+    meetingsdelegate.h
 
 
 FORMS    += mainwidget.ui \

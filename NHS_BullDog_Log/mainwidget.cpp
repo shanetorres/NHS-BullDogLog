@@ -116,8 +116,10 @@ mainWidget::mainWidget(QWidget *parent) :
 
     meetingsModel = new QStandardItemModel(this);
     meetingsDialog = new AddMeetingsDialog(this);
+    meetingsDelegate = new MeetingsDelegate(this);
 
     connect(meetingsDialog, SIGNAL(dateAdded(QString)), this, SLOT(on_dateAdded(QString)));
+    connect(meetingsDelegate, SIGNAL(meetingComboEdited(bool,int,int)), this, SLOT(on_meetingComboEdited(bool,int,int)));
 
     ui->meetingsTableView->setModel(meetingsModel);
     populateMeetingsModel();
@@ -882,6 +884,7 @@ void mainWidget::on_dateAdded(QString date)
     meetingsModel->setHorizontalHeaderItem(dates.size() + 1, new QStandardItem(date));
 }
 
+
 void mainWidget::initializeMeetingsModel()
 {
     ui->meetingsTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -934,6 +937,7 @@ void mainWidget::populateMeetingsModel()
         meetingsModel->appendRow(fullName);
     }
 }
+
 
 /*------------------END MEETINGS TAB ON OFFICER RECORDS------------------*/
 

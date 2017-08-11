@@ -9,6 +9,7 @@
 #include "currentstudent.h"
 #include "addcontributiondialog.h"
 #include "addmeetingsdialog.h"
+#include "meetingsdelegate.h"
 #include <vector>
 #include <QFile>
 #include <QTextStream>
@@ -126,6 +127,8 @@ private slots:
 
     void on_dateAdded(QString);
 
+    void on_meetingComboEdited(bool, int, int);
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
@@ -147,6 +150,7 @@ private:
     QStandardItemModel* meetingsModel;
     AddMeetingsDialog* meetingsDialog;
     QVector<QString> dates;
+    MeetingsDelegate* meetingsDelegate;
 
 };
 #endif // MAINWIDGET_H
