@@ -43,6 +43,9 @@ public:
     void setServeEvent(QString);
     QString getServeEvent(int);
 
+    void setMeeting(bool);
+    bool getMeeting(int);
+
     void setServeVector(QVector<QString>);
     QVector<QString> getServeVector();
 
@@ -59,7 +62,6 @@ private:
     bool inductionAttend;
     int gradeLevel;
     QVector<QString> studentEvents;
-
     QVector<QString> serveEvents;
     QVector<bool> meetingsBool;
 
