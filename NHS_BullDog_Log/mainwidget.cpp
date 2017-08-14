@@ -74,7 +74,7 @@ mainWidget::mainWidget(QWidget *parent) :
     currentStudentsDelegate = new officerDelegate(this);
 
     //connecting all delegate signals to desired slots on the mainwidget
-    connect(currentStudentsDelegate, SIGNAL(studentNameEdited(CurrentStudent, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int)));
+    connect(currentStudentsDelegate, SIGNAL(studentNameEdited(CurrentStudent, int, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int, int)));
     connect(currentStudentsDelegate, SIGNAL(studentSpinEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
     connect(currentStudentsDelegate, SIGNAL(studentComboEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
     connect(currentStudentsDelegate, SIGNAL(studentGradeEdited(CurrentStudent,int)), this, SLOT(on_studentGradeEdited(CurrentStudent,int)));
@@ -87,13 +87,14 @@ mainWidget::mainWidget(QWidget *parent) :
 //    currentStudentsSortModel->setDynamicSortFilter(false);
 
 //    currentStudentsSortModel->setSourceModel(currentStudentsModel);
-
+    ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->currentTableView->setModel(currentStudentsModel);
 //    ui->currentTableView->setSortingEnabled(true);
-    ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
 
     //assigning the custom delegate to the view
     ui->currentTableView->setItemDelegate(currentStudentsDelegate);
+
 
     //setting the header text of the model
     currentStudentsModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
@@ -103,6 +104,7 @@ mainWidget::mainWidget(QWidget *parent) :
     currentStudentsModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Meetings Attended")));
     currentStudentsModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Induction Attendance")));
     currentStudentsModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Grade Level")));
+
 
     /*<END OVERALL PAGE>*/
 
@@ -124,6 +126,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
 
     ui->contributionsTableView->setModel(contributionsModel);
+
 //    ui->contributionsTableView->setSortingEnabled(true);
     initializeContModel();              //sets the header text for the first two columns as well as resizing properties
     populateContributionsModel();
@@ -230,7 +233,7 @@ void mainWidget::on_offAddStudentButton_clicked()
    }
     writeToContributionsFile();
     writeToServiceFile();
-
+    writeToMeetingsFile();
 }
 
 void mainWidget::on_offDeleteStudentButton_clicked()
@@ -304,14 +307,34 @@ void mainWidget::disableButtons()
 
 
 //assigns data from line edits to an object in the vector based on the row number
-void mainWidget::on_studentNameEdited(CurrentStudent student, int row)
+void mainWidget::on_studentNameEdited(CurrentStudent student, int row, int column)
 {
     currentStudents[row].setFirstName(student.getFirstName());
     currentStudents[row].setLastName(student.getLastName());
     qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
-    updateContributionsModel();
-    updateServiceModel();
-    updateMeetingsModel();
+
+    //this mess of code updates the names in the other models, huge performance saver
+    QStandardItem* firstC = new QStandardItem(student.getFirstName());
+    firstC->setFlags(firstC->flags() & ~Qt::ItemIsEditable);
+    QStandardItem* lastC = new QStandardItem(student.getLastName());
+    lastC->setFlags(lastC->flags() & ~Qt::ItemIsEditable);
+    contributionsModel->setItem(row,0,firstC);
+    contributionsModel->setItem(row,1,lastC);
+
+    QStandardItem* firstS = new QStandardItem(student.getFirstName());
+    firstS->setFlags(firstS->flags() & ~Qt::ItemIsEditable);
+    QStandardItem* lastS = new QStandardItem(student.getLastName());
+    lastS->setFlags(lastS->flags() & ~Qt::ItemIsEditable);
+    serviceModel->setItem(row,0, firstS);
+    serviceModel->setItem(row,1,lastS);
+
+    QStandardItem* firstM = new QStandardItem(student.getFirstName());
+    firstS->setFlags(firstM->flags() & ~Qt::ItemIsEditable);
+    QStandardItem* lastM = new QStandardItem(student.getLastName());
+    lastS->setFlags(lastM->flags() & ~Qt::ItemIsEditable);
+    meetingsModel->setItem(row,0, firstM);
+    meetingsModel->setItem(row,1,lastM);
+
     writeToFile();
 }
 
@@ -649,6 +672,7 @@ void mainWidget::updateContributionsModel()
     }
     writeToContributionsFile();
     writeToServiceFile();
+    ui->contributionsTableView->setUpdatesEnabled(true);
 }
 
 //writes the event names as well as each student's contribution to a file
@@ -822,6 +846,7 @@ void mainWidget::updateServiceModel()
 {
     serviceModel->clear();
     initializeServiceModel();
+
     for (int i = 0; i < currentStudents.size(); i++)
     {
         QList<QStandardItem*> fullName;
@@ -839,6 +864,7 @@ void mainWidget::updateServiceModel()
         serviceModel->appendRow(fullName);
     }
     writeToServiceFile();
+    ui->serviceTableView->setUpdatesEnabled(true);
 }
 
 //truncates previous file data and rewrites all service event data to serviceprojects.csv
@@ -1044,6 +1070,7 @@ void mainWidget::updateMeetingsModel()
 {
     meetingsModel->clear();
     initializeMeetingsModel();
+
     for (int i = 0; i < currentStudents.size(); i++)
     {
         QList<QStandardItem*> fullName;
@@ -1064,6 +1091,7 @@ void mainWidget::updateMeetingsModel()
         meetingsModel->appendRow(fullName);
     }
     writeToMeetingsFile();
+    ui->meetingsTableView->setUpdatesEnabled(true);
 }
 
 //writing all meeting data to a file

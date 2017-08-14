@@ -95,7 +95,7 @@ private slots:
 
     //Signals from delegates
 
-    void on_studentNameEdited(CurrentStudent, int);
+    void on_studentNameEdited(CurrentStudent, int, int);
 
     void on_studentSpinEdited(CurrentStudent, int);
 
