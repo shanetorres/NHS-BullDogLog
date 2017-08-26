@@ -57,6 +57,10 @@ public:
 
     void populateCurrentProspectStudentsModel();
 
+    void enableButtons2();
+
+    void disableButtons2();
+
     //service projects page
 
     void initializeServiceModel();
@@ -119,21 +123,23 @@ private slots:
 
     //ADMIN RECORDS
 
-    void on_offMenuButton_2_clicked();
+    void on_offMenuButton2_clicked();
 
-    void on_offAddStudentButton_2_clicked();
+    void on_offAddStudentButton2_clicked();
 
-    void on_offDeleteStudentButton_2_clicked();
+    void on_offDeleteStudentButton2_clicked();
 
     //ADMIN SIGNALS
 
-    void on_studentNameEdited_2(ProspectStudent, int);
+    void on_studentNameEdited2(ProspectStudent, int);
 
-    void on_studentComboEdited_2(ProspectStudent, int);
+    void on_studentComboEdited2(ProspectStudent, int);
 
     void on_studentClassEdited(ProspectStudent, int);
 
     void on_studentStatusEdited(ProspectStudent, int);
+
+    void on_studentNotesEdited(ProspectStudent, int);
 
     //void on_studentNotesEdited(ProspectStudent,int);
 
@@ -157,7 +163,7 @@ private slots:
 
     void on_dateAdded(QString);
 
-    void on_meetingComboEdited(bool, int, int);
+    //void on_meetingComboEdited(bool, int, int);
 
 
 private:

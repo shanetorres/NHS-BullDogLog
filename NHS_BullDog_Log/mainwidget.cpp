@@ -37,11 +37,11 @@ mainWidget::mainWidget(QWidget *parent) :
     currentAdminDelegate = new adminDelegate(this);
 
     //connecting all delegate signals to desired slots on the mainwidget
-    connect(currentAdminDelegate, SIGNAL(studentNameEdited_2(ProspectStudent, int)), this, SLOT(on_studentNameEdited_2(ProspectStudent, int)));
-    connect(currentAdminDelegate, SIGNAL(studentComboEdited_2(ProspectStudent,int)), this, SLOT(on_studentComboEdited_2(ProspectStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentNameEdited2(ProspectStudent, int)), this, SLOT(on_studentNameEdited2(ProspectStudent, int)));
+    connect(currentAdminDelegate, SIGNAL(studentComboEdited2(ProspectStudent,int)), this, SLOT(on_studentComboEdited2(ProspectStudent,int)));
     connect(currentAdminDelegate, SIGNAL(studentClassEdited(ProspectStudent,int)), this, SLOT(on_studentClassEdited(ProspectStudent,int)));
     connect(currentAdminDelegate, SIGNAL(studentStatusEdited(ProspectStudent,int)), this, SLOT(on_studentStatusEdited(ProspectStudent,int)));
-    //connect(currentAdminDelegate, SIGNAL(studentNotesEdited(ProspectStudent,int)), this, SLOT(on_studentNotesEdited(ProspectStudent,int)));
+    connect(currentAdminDelegate, SIGNAL(studentNotesEdited(ProspectStudent,int)), this, SLOT(on_studentNotesEdited(ProspectStudent,int)));
 
 
     //creating the model for all current students and setting resizing parameters for the view
@@ -61,8 +61,8 @@ mainWidget::mainWidget(QWidget *parent) :
     currentAdminModel->setHorizontalHeaderItem(4, new QStandardItem(QString("Teacher Recommendations")));
     currentAdminModel->setHorizontalHeaderItem(5, new QStandardItem(QString("Board Approval")));
     currentAdminModel->setHorizontalHeaderItem(6, new QStandardItem(QString("Gpa")));
-    currentAdminModel->setHorizontalHeaderItem(7, new QStandardItem(QString("Class")));
-    currentAdminModel->setHorizontalHeaderItem(8, new QStandardItem(QString("Status")));
+    currentAdminModel->setHorizontalHeaderItem(7, new QStandardItem(QString("Grade Level")));
+    currentAdminModel->setHorizontalHeaderItem(8, new QStandardItem(QString("NHS Status")));
     currentAdminModel->setHorizontalHeaderItem(9, new QStandardItem(QString("Notes")));
 
     /*----------------------------OFFICER RECORDS----------------------------*/
@@ -161,7 +161,7 @@ mainWidget::mainWidget(QWidget *parent) :
     meetingsDelegate = new MeetingsDelegate(this);
 
     connect(meetingsDialog, SIGNAL(dateAdded(QString)), this, SLOT(on_dateAdded(QString)));
-    connect(meetingsDelegate, SIGNAL(meetingComboEdited(bool,int,int)), this, SLOT(on_meetingComboEdited(bool,int,int)));
+    //connect(meetingsDelegate, SIGNAL(meetingComboEdited(bool,int,int)), this, SLOT(on_meetingComboEdited(bool,int,int)));
 
     ui->meetingsTableView->setModel(meetingsModel);
     populateMeetingsModel();
@@ -986,34 +986,15 @@ void mainWidget::populateMeetingsModel()
 
 /*~~~~~~~~~~~~~~~~~~~ADMIN RECORDS BEGIN~~~~~~~~~~~~~~~~~*/
 
-void mainWidget::on_offMenuButton_2_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
+void mainWidget::on_offMenuButton2_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
 
-void mainWidget::on_offAddStudentButton_2_clicked()
+void mainWidget::on_offAddStudentButton2_clicked()
 {
     //inserts a blank record with 9 columns to be edited
    QList<QStandardItem *> newRecord;
    for (int i = 0; i < currentAdminCols; i++)
    {
-     if (i == 0 || i ==1)
-     {
      newRecord.append(new QStandardItem(" "));
-     }
-     else if (i == 2 || i == 3 || i == 4 || i == 5 || i == 6)
-     {
-     newRecord.append(new QStandardItem("No"));
-     }
-     else if (i == 7)
-     {
-     newRecord.append(new QStandardItem(" "));
-     }
-     else if (i == 8)
-     {
-     newRecord.append(new QStandardItem("Applicant"));
-     }
-     else if (i == 9)
-     {
-     newRecord.append(new QStandardItem("Notes"));
-     }
    }
    currentAdminModel->appendRow(newRecord);
 
@@ -1021,11 +1002,15 @@ void mainWidget::on_offAddStudentButton_2_clicked()
    currentProspectStudents.push_back(student);
 
    totalProspectStudents++;
+   for (int i = 0; i < currentProspectStudents.size(); i++)
+   {
+       qDebug() << "STUDENT " << i << "NAME: " << currentProspectStudents[i].getFirstName();
+   }
 }
 
-void mainWidget::on_offDeleteStudentButton_2_clicked()
+void mainWidget::on_offDeleteStudentButton2_clicked()
 {
-    disableButtons();
+    disableButtons2();
 
     //Message box confirms whether or not the record should be deleted
     QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Delete Student",
@@ -1035,8 +1020,22 @@ void mainWidget::on_offDeleteStudentButton_2_clicked()
         adminDeleteRecord();
     }
     else {
-        enableButtons();
+        enableButtons2();
     }
+}
+
+void mainWidget::enableButtons2()
+{
+    ui->offDeleteStudentButton2->setEnabled(true);
+    ui->offMenuButton2->setEnabled(true);
+    ui->offAddStudentButton2->setEnabled(true);
+}
+
+void mainWidget::disableButtons2()
+{
+    ui->offDeleteStudentButton2->setEnabled(false);
+    ui->offMenuButton2->setEnabled(false);
+    ui->offAddStudentButton2->setEnabled(false);
 }
 
 //deletes the selected record from the view as well as from the vector
@@ -1046,15 +1045,15 @@ void mainWidget::adminDeleteRecord()
     if (totalProspectStudents != 0)
     {
         currentProspectStudents.erase(currentProspectStudents.begin()+ui->currentTableView_2->currentIndex().row());
-        totalStudents--;
+        totalProspectStudents--;
     }
     currentAdminModel->removeRows(ui->currentTableView_2->currentIndex().row(),1);
-    enableButtons();
+    enableButtons2();
     writeToAdminFile();
 }
 
 //assings data from line edits to an object in the vector based on the row number
-void mainWidget::on_studentNameEdited_2(ProspectStudent student, int row)
+void mainWidget::on_studentNameEdited2(ProspectStudent student, int row)
 {
     qDebug() << "IN";
     currentProspectStudents[row].setFirstName(student.getFirstName());
@@ -1066,7 +1065,7 @@ void mainWidget::on_studentNameEdited_2(ProspectStudent student, int row)
 }
 
 //assings data from the combo box to an object in the vector
-void mainWidget::on_studentComboEdited_2(ProspectStudent student, int row)
+void mainWidget::on_studentComboEdited2(ProspectStudent student, int row)
 {
     currentProspectStudents[row].setApplicationBool(student.getApplicationBool());
     currentProspectStudents[row].setEssayBool(student.getEssayBool());
@@ -1098,6 +1097,18 @@ void mainWidget::on_studentStatusEdited(ProspectStudent student, int row)
     writeToAdminFile();
 
 }
+
+void mainWidget::on_studentNotesEdited(ProspectStudent student, int row)
+{
+    currentProspectStudents[row].setStudentNotes(student.getStudentNotes());
+
+    qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
+             << currentProspectStudents[row].getStudentNotes();
+    writeToAdminFile();
+
+}
+
+
 
 
 
@@ -1131,7 +1142,7 @@ void mainWidget::writeToAdminFile()
         {
             currentProspectStudents[i].setStudentGpa(false);
         }
-        if (currentProspectStudents[i].getStudentClass() > 100 || currentProspectStudents[i].getStudentClass() < 0)
+        if (currentProspectStudents[i].getStudentClass() < 11 || currentProspectStudents[i].getStudentClass() > 12)
         {
             currentProspectStudents[i].setStudentClass(11);
         }
@@ -1144,7 +1155,7 @@ void mainWidget::writeToAdminFile()
                                                    << currentProspectStudents[i].getApplicationBool() << "," << currentProspectStudents[i].getEssayBool() << ","
                                                    << currentProspectStudents[i].getRecommendationBool() << "," << currentProspectStudents[i].getApprovalBool() << ","
                                                    << currentProspectStudents[i].getStudentGpa() << "," << currentProspectStudents[i].getStudentClass() << ","
-                                                   << currentProspectStudents[i].getStudentStatus() << "," << endl;
+                                                   << currentProspectStudents[i].getStudentStatus() << "," << currentProspectStudents[i].getStudentNotes() << "," << endl;
     }
 }
 
@@ -1199,6 +1210,7 @@ void mainWidget::populateCurrentProspectStudentsModel()
                             newRecord.push_back("No");
                             newRecord.push_back("11");
                             newRecord.push_back("Applicant");
+                            newRecord.push_back(" ");
                             for (int j = 0; j < lineToken.size(); j++)
                             {
                                 currentAdminModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
@@ -1217,6 +1229,7 @@ void mainWidget::populateCurrentProspectStudentsModel()
                             newRecord.push_back("No");
                             newRecord.push_back("11");
                             newRecord.push_back("Applicant");
+                            newRecord.push_back(" ");
                             for (int j = 0; j < lineToken.size(); j++)
                             {
                                 currentAdminModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
@@ -1285,15 +1298,18 @@ void mainWidget::populateCurrentProspectStudentsModel()
                     QStandardItem *item = new QStandardItem("Applicant");
                     currentAdminModel->setItem(lineindex, 8, item);
                 }
-                else if (student.getStudentGpa() == 1)
+                else if (student.getStudentStatus() == 1)
                 {
                     QStandardItem *item = new QStandardItem("Member");
                     currentAdminModel->setItem(lineindex, 8, item);
                 }
 
+
                 qDebug() << "POPULATE PROSPECT STUDENT: " << student.getFirstName() << ", " << student.getLastName() << ", " << student.getApplicationBool() << ", "
                          << student.getEssayBool() << ", " << student.getRecommendationBool() << ", " << student.getApprovalBool() << ", "
-                         << student.getStudentGpa() << ", " << student.getStudentClass() << ", " << student.getStudentStatus();
+                         << student.getStudentGpa() << ", " << student.getStudentClass() << ", " << student.getStudentStatus() << ", " << student.getStudentNotes();
+
+                totalProspectStudents++;
              }
              catch (const std::out_of_range& e)
              {
