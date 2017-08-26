@@ -37,11 +37,13 @@ public:
 
     void writeToFile();
 
+    void updateModels(CurrentStudent,int);
+
     //contributions page
 
     void populateCurrentStudentsModel();
 
-    void updateContributionsModel();
+    void updateContributionsModel(int);
 
     void initializeContModel();
 
@@ -55,7 +57,7 @@ public:
 
     void populateServiceModel();
 
-    void updateServiceModel();
+    void updateServiceModel(int);
 
     void writeToServiceFile();
 
@@ -65,7 +67,7 @@ public:
 
     void initializeMeetingsModel();
 
-    void updateMeetingsModel();
+    void updateMeetingsModel(int);
 
     void writeToMeetingsFile();
 
@@ -84,6 +86,7 @@ private slots:
     void on_officerButton_clicked();
 
     void on_quitButton_clicked();
+
 
     /*~OVERALL TAB~*/
 

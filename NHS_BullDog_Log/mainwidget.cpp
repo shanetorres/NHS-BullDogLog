@@ -86,14 +86,14 @@ mainWidget::mainWidget(QWidget *parent) :
 //    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
 //    currentStudentsSortModel->setDynamicSortFilter(false);
 
-//    currentStudentsSortModel->setSourceModel(currentStudentsModel);
-    ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->currentTableView->setModel(currentStudentsModel);
-//    ui->currentTableView->setSortingEnabled(true);
+    ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+//    ui->currentTableView->setModel(currentStudentsModel);
+    ui->currentTableView->setSortingEnabled(true);
 
 
     //assigning the custom delegate to the view
-    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
+
 
 
     //setting the header text of the model
@@ -186,7 +186,30 @@ void mainWidget::on_officerButton_clicked() { ui->stackedWidget->setCurrentIndex
 
 void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
+void mainWidget::updateModels(CurrentStudent student, int row)
+{
+    //this mess of code updates the names in the other models, huge performance saver
+    QStandardItem* firstC = new QStandardItem(student.getFirstName());
+    firstC->setFlags(firstC->flags() & ~Qt::ItemIsEditable);
+    QStandardItem* lastC = new QStandardItem(student.getLastName());
+    lastC->setFlags(lastC->flags() & ~Qt::ItemIsEditable);
+    contributionsModel->setItem(row,0,firstC);
+    contributionsModel->setItem(row,1,lastC);
 
+    QStandardItem* firstS = new QStandardItem(student.getFirstName());
+    firstS->setFlags(firstS->flags() & ~Qt::ItemIsEditable);
+    QStandardItem* lastS = new QStandardItem(student.getLastName());
+    lastS->setFlags(lastS->flags() & ~Qt::ItemIsEditable);
+    serviceModel->setItem(row,0, firstS);
+    serviceModel->setItem(row,1,lastS);
+
+    QStandardItem* firstM = new QStandardItem(student.getFirstName());
+    firstM->setFlags(firstM->flags() & ~Qt::ItemIsEditable);
+    QStandardItem* lastM = new QStandardItem(student.getLastName());
+    lastM->setFlags(lastM->flags() & ~Qt::ItemIsEditable);
+    meetingsModel->setItem(row,0, firstM);
+    meetingsModel->setItem(row,1,lastM);
+}
 
 /*---------------------OVERALL TAB ON OFFICER PAGE--------------------*/
 
@@ -198,7 +221,7 @@ void mainWidget::on_offAddStudentButton_clicked()
    QList<QStandardItem *> newRecord;
    for (int i = 0; i < currentStudentCols; i++)
    {
-       if (i == 4)
+       if (i == 2 || i == 3 || i == 4)
        {
        QStandardItem* data = new QStandardItem(" ");
        data->setFlags(data->flags() & ~Qt::ItemIsEditable);
@@ -231,6 +254,7 @@ void mainWidget::on_offAddStudentButton_clicked()
    {
        qDebug() << "STUDENT " << i << "NAME: " << currentStudents[i].getFirstName();
    }
+   updateModels(student, currentStudentsModel->rowCount()-1);
     writeToContributionsFile();
     writeToServiceFile();
     writeToMeetingsFile();
@@ -255,6 +279,7 @@ void mainWidget::on_offDeleteStudentButton_clicked()
 //deletes the selected record from the view as well as from the vector
 void mainWidget::officerDeleteRecord()
 {
+    int row = ui->currentTableView->currentIndex().row();
     //removes current student from vector
     if (totalStudents != 0)
     {
@@ -264,9 +289,9 @@ void mainWidget::officerDeleteRecord()
     currentStudentsModel->removeRows(ui->currentTableView->currentIndex().row(),1);
     enableButtons();
     writeToFile();
-    updateContributionsModel();
-    updateServiceModel();
-    updateMeetingsModel();
+    updateContributionsModel(row);
+    updateServiceModel(row);
+    updateMeetingsModel(row);
 }
 
 //enables buttons on officer page for clicking
@@ -312,29 +337,7 @@ void mainWidget::on_studentNameEdited(CurrentStudent student, int row, int colum
     currentStudents[row].setFirstName(student.getFirstName());
     currentStudents[row].setLastName(student.getLastName());
     qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
-
-    //this mess of code updates the names in the other models, huge performance saver
-    QStandardItem* firstC = new QStandardItem(student.getFirstName());
-    firstC->setFlags(firstC->flags() & ~Qt::ItemIsEditable);
-    QStandardItem* lastC = new QStandardItem(student.getLastName());
-    lastC->setFlags(lastC->flags() & ~Qt::ItemIsEditable);
-    contributionsModel->setItem(row,0,firstC);
-    contributionsModel->setItem(row,1,lastC);
-
-    QStandardItem* firstS = new QStandardItem(student.getFirstName());
-    firstS->setFlags(firstS->flags() & ~Qt::ItemIsEditable);
-    QStandardItem* lastS = new QStandardItem(student.getLastName());
-    lastS->setFlags(lastS->flags() & ~Qt::ItemIsEditable);
-    serviceModel->setItem(row,0, firstS);
-    serviceModel->setItem(row,1,lastS);
-
-    QStandardItem* firstM = new QStandardItem(student.getFirstName());
-    firstS->setFlags(firstM->flags() & ~Qt::ItemIsEditable);
-    QStandardItem* lastM = new QStandardItem(student.getLastName());
-    lastS->setFlags(lastM->flags() & ~Qt::ItemIsEditable);
-    meetingsModel->setItem(row,0, firstM);
-    meetingsModel->setItem(row,1,lastM);
-
+    updateModels(student, row);
     writeToFile();
 }
 
@@ -398,6 +401,10 @@ void mainWidget::writeToFile()
         {
             currentStudents[i].setGradeLevel(11);
         }
+        if (currentStudents[i].getFirstName().size() == 0 && currentStudents[i].getLastName().size() == 0)
+        {
+            currentStudents[i].setAttendedMeetings(0);
+        }
         if (currentStudents[i].getFirstName().size() == 0)
         {
             currentStudents[i].setFirstName(" ");
@@ -406,6 +413,7 @@ void mainWidget::writeToFile()
         {
             currentStudents[i].setLastName(" ");
         }
+
         stream << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
                                                    << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
                                                    << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
@@ -447,7 +455,7 @@ void mainWidget::populateCurrentStudentsModel()
                         QString value = lineToken.at(i);
                         newRecord.push_back(value);
                         QStandardItem *item = new QStandardItem(value);
-                        if (i == 4)
+                        if (i == 2|| i == 3 || i == 4)
                         {
                             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
                         }
@@ -632,6 +640,7 @@ void mainWidget::on_contDeleteEventButton_clicked()
 //slot receives a signal from the delegate everytime an event is edited
 void mainWidget::on_eventEdited(QString event, int row, int column)
 {
+    int contributionsCounter = 0;
     qDebug() << "Student: " << currentStudents[row].getFirstName() << currentStudents[row].getLastName();
     QVector<QString> events;
     //the current student vector is copied to the events vector so it can be updated with the edit
@@ -642,37 +651,61 @@ void mainWidget::on_eventEdited(QString event, int row, int column)
     events[column - 2] = event;             //the edited event is added to the events vector at the index of the column
     currentStudents[row].setEventVector(events);        //copy method is called that updates the student vector with the events vector
 
+    for (int i = 0; i < (contributionsModel->columnCount() - 2); i++)
+    {
+        events = currentStudents[row].getEventVector();
+    }
+    //loops through every value in the vector to detect meetings where the student was present
+    for (int k = 0; k < events.size(); k++)
+    {
+        if (events[k].size() > 1)
+        {
+            contributionsCounter++;
+        }
+    }
+    //updates the students meetings counter
+    currentStudents[row].setContributions(contributionsCounter);
+    //converts this counter to a string
+    QString contString = QString::number(contributionsCounter);
+    QStandardItem* newValue = new QStandardItem(contString);
+    newValue->setFlags(newValue->flags() & ~Qt::ItemIsEditable);    //makes the item non editable
+    currentStudentsModel->setItem(row, 2, newValue);      //updates the edited column in the current students view
+    writeToFile();
     writeToContributionsFile();
 }
 
 
 //populates the contributions model with data from the overall tab everytime it is updated
-void mainWidget::updateContributionsModel()
+void mainWidget::updateContributionsModel(int row)
 {
-    contributionsModel->clear();
-    initializeContModel();
+//    contributionsModel->clear();
+//    initializeContModel();
 
-    for (int i = 0; i < currentStudents.size(); i++)
-    {
-        QList<QStandardItem*> fullName;
-        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
-        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
-        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
-        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
-        fullName.append(first);
-        fullName.append(last);
+//    for (int i = 0; i < currentStudents.size(); i++)
+//    {
+//        QList<QStandardItem*> fullName;
+//        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+//        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
+//        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+//        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+//        fullName.append(first);
+//        fullName.append(last);
 
-        for (int j = 0; j < eventNames.size(); j++)
-        {
-            contributionsModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
-            fullName.append(new QStandardItem(currentStudents[i].getStudentEvent(j)));
-        }
+//        for (int j = 0; j < eventNames.size(); j++)
+//        {
+//            contributionsModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
+//            fullName.append(new QStandardItem(currentStudents[i].getStudentEvent(j)));
+//        }
 
-        contributionsModel->appendRow(fullName);
-    }
+//        contributionsModel->appendRow(fullName);
+//    }
+//    writeToContributionsFile();
+//    writeToServiceFile();
+//    ui->contributionsTableView->setUpdatesEnabled(true);
+
+    contributionsModel->removeRows(row,1);
+
     writeToContributionsFile();
-    writeToServiceFile();
-    ui->contributionsTableView->setUpdatesEnabled(true);
 }
 
 //writes the event names as well as each student's contribution to a file
@@ -694,6 +727,13 @@ void mainWidget::writeToContributionsFile()
         {
             for (int k = 0; k < eventNames.size(); k++)
             {
+                QVector<QString> temp;
+                if (currentStudents[j].getStudentEvent(k).size() == 0)
+                {
+                   temp = currentStudents[j].getEventVector();
+                   temp[k] = " ";
+                   currentStudents[j].setEventVector(temp);
+                }
                 stream << currentStudents[j].getStudentEvent(k) << ",";
             }
             stream << endl;
@@ -819,6 +859,7 @@ void mainWidget::on_serveDeleteEventButton_clicked()
 
 void mainWidget::on_serveEventEdited(QString event, int row, int column)
 {
+    int serveCounter = 0;
     qDebug() << "Student: " << currentStudents[row].getFirstName() << currentStudents[row].getLastName();
     QVector<QString> events;
     //the current student vector is copied to the events vector so it can be updated with the edit
@@ -828,6 +869,26 @@ void mainWidget::on_serveEventEdited(QString event, int row, int column)
     }
     events[column - 2] = event;             //the edited event is added to the events vector at the index of the column
     currentStudents[row].setServeVector(events);        //copy method is called that updates the student vector with the events vector
+    for (int i = 0; i < (serviceModel->columnCount() - 2); i++)
+    {
+        events = currentStudents[row].getServeVector();
+    }
+    //loops through every value in the vector to detect meetings where the student was present
+    for (int k = 0; k < events.size(); k++)
+    {
+        if (events[k].size() > 1)
+        {
+            serveCounter++;
+        }
+    }
+    //updates the students meetings counter
+    currentStudents[row].setServProjects(serveCounter);
+    //converts this counter to a string
+    QString serveString = QString::number(serveCounter);
+    QStandardItem* newValue = new QStandardItem(serveString);
+    newValue->setFlags(newValue->flags() & ~Qt::ItemIsEditable);    //makes the item non editable
+    currentStudentsModel->setItem(row, 3, newValue);      //updates the edited column in the current students view
+    writeToFile();
     writeToServiceFile();
 }
 
@@ -842,29 +903,31 @@ void mainWidget::initializeServiceModel()
 }
 
 //updates the service model when any changes are made to the student names
-void mainWidget::updateServiceModel()
+void mainWidget::updateServiceModel(int row)
 {
-    serviceModel->clear();
-    initializeServiceModel();
+//    serviceModel->clear();
+//    initializeServiceModel();
 
-    for (int i = 0; i < currentStudents.size(); i++)
-    {
-        QList<QStandardItem*> fullName;
-        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
-        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
-        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
-        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
-        fullName.append(first);
-        fullName.append(last);
-        for (int j = 0; j < eventNames.size(); j++)
-        {
-            serviceModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
-            fullName.append(new QStandardItem(currentStudents[i].getServeEvent(j)));
-        }
-        serviceModel->appendRow(fullName);
-    }
+//    for (int i = 0; i < currentStudents.size(); i++)
+//    {
+//        QList<QStandardItem*> fullName;
+//        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+//        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
+//        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+//        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+//        fullName.append(first);
+//        fullName.append(last);
+//        for (int j = 0; j < eventNames.size(); j++)
+//        {
+//            serviceModel->setHorizontalHeaderItem(j+2, new QStandardItem(eventNames[j])); //adding all the event names to the header
+//            fullName.append(new QStandardItem(currentStudents[i].getServeEvent(j)));
+//        }
+//        serviceModel->appendRow(fullName);
+//    }
+//    writeToServiceFile();
+//    ui->serviceTableView->setUpdatesEnabled(true);
+    serviceModel->removeRows(row,1);
     writeToServiceFile();
-    ui->serviceTableView->setUpdatesEnabled(true);
 }
 
 //truncates previous file data and rewrites all service event data to serviceprojects.csv
@@ -885,6 +948,13 @@ void mainWidget::writeToServiceFile()
         {
             for (int k = 0; k < eventNames.size(); k++)
             {
+                QVector<QString> temp;
+                if (currentStudents[j].getServeEvent(k).size() == 0)
+                {
+                   temp = currentStudents[j].getServeVector();
+                   temp[k] = " ";
+                   currentStudents[j].setServeVector(temp);
+                }
                 stream << currentStudents[j].getServeEvent(k) << ",";
             }
             stream << endl;
@@ -985,7 +1055,7 @@ void mainWidget::on_deleteMeetingButton_clicked()
                 tempMeetings.erase(tempMeetings.begin()+ui->meetingsTableView->currentIndex().column() - 1);
                 currentStudents[i].setMeetingsBool(tempMeetings);
             }
-            for (int i = 0; i < currentStudents.size(); i++)
+
             writeToMeetingsFile();
         }
     }
@@ -1066,32 +1136,34 @@ void mainWidget::initializeMeetingsModel()
 }
 
 //updating the meetings model every time the current students name is updated
-void mainWidget::updateMeetingsModel()
+void mainWidget::updateMeetingsModel(int row)
 {
-    meetingsModel->clear();
-    initializeMeetingsModel();
+//    meetingsModel->clear();
+//    initializeMeetingsModel();
 
-    for (int i = 0; i < currentStudents.size(); i++)
-    {
-        QList<QStandardItem*> fullName;
-        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
-        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
-        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
-        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
-        fullName.append(first);
-        fullName.append(last);
-        for (int j = 0; j < dates.size(); j++)
-        {
-            QString meeting;
-            meetingsModel->setHorizontalHeaderItem(j+2, new QStandardItem(dates[j])); //adding all the event names to the header
-            if (currentStudents[i].getMeeting(j) == 0) { meeting = "Absent"; }
-            else if (currentStudents[i].getMeeting(j) == 1) { meeting = "Present"; }
-            fullName.append(new QStandardItem(meeting));
-        }
-        meetingsModel->appendRow(fullName);
-    }
+//    for (int i = 0; i < currentStudents.size(); i++)
+//    {
+//        QList<QStandardItem*> fullName;
+//        QStandardItem* first = new QStandardItem(currentStudents[i].getFirstName());
+//        first->setFlags(first->flags() & ~Qt::ItemIsEditable);  //changing the item flags to make the student name non editable from the contributions page
+//        QStandardItem* last = new QStandardItem(currentStudents[i].getLastName());
+//        last->setFlags(last->flags() & ~Qt::ItemIsEditable);
+//        fullName.append(first);
+//        fullName.append(last);
+//        for (int j = 0; j < dates.size(); j++)
+//        {
+//            QString meeting;
+//            meetingsModel->setHorizontalHeaderItem(j+2, new QStandardItem(dates[j])); //adding all the event names to the header
+//            if (currentStudents[i].getMeeting(j) == 0) { meeting = "Absent"; }
+//            else if (currentStudents[i].getMeeting(j) == 1) { meeting = "Present"; }
+//            fullName.append(new QStandardItem(meeting));
+//        }
+//        meetingsModel->appendRow(fullName);
+//    }
+//    writeToMeetingsFile();
+//    ui->meetingsTableView->setUpdatesEnabled(true);
+    meetingsModel->removeRows(row,1);
     writeToMeetingsFile();
-    ui->meetingsTableView->setUpdatesEnabled(true);
 }
 
 //writing all meeting data to a file
