@@ -86,10 +86,11 @@ mainWidget::mainWidget(QWidget *parent) :
 //    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
 //    currentStudentsSortModel->setDynamicSortFilter(false);
 
-    ui->currentTableView->setModel(currentStudentsModel);
-    ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 //    ui->currentTableView->setModel(currentStudentsModel);
-    ui->currentTableView->setSortingEnabled(true);
+    ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    ui->currentTableView->setModel(currentStudentsModel);
+    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
+//    ui->currentTableView->setSortingEnabled(true);
 
 
     //assigning the custom delegate to the view
