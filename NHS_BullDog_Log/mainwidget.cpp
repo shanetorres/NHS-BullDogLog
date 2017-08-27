@@ -1151,6 +1151,10 @@ void mainWidget::writeToAdminFile()
         {
             currentProspectStudents[i].setStudentStatus(false);
         }
+        if (currentProspectStudents[i].getStudentNotes().size() == 0)
+        {
+            currentProspectStudents[i].setStudentNotes(" ");
+        }
 
         stream << currentProspectStudents[i].getFirstName() << "," << currentProspectStudents[i].getLastName() << ","
                                                    << currentProspectStudents[i].getApplicationBool() << "," << currentProspectStudents[i].getEssayBool() << ","
