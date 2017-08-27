@@ -999,6 +999,7 @@ void mainWidget::on_offAddStudentButton2_clicked()
    currentAdminModel->appendRow(newRecord);
 
    ProspectStudent student;
+   student.setStudentNotes(" ");
    currentProspectStudents.push_back(student);
 
    totalProspectStudents++;
