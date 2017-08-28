@@ -14,12 +14,16 @@ class AddMeetingsDialog : public QDialog
 public:
     explicit AddMeetingsDialog(QWidget *parent = 0);
     ~AddMeetingsDialog();
+    void reject();
 
 private slots:
     void on_okMeetingButton_clicked();
 
+    void on_cancelMeetingButton_clicked();
+
 signals:
     void dateAdded(QString);
+    void cancelClicked();
 
 private:
     Ui::AddMeetingsDialog *ui;

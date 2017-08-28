@@ -23,7 +23,7 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void meetingComboEdited(bool, int, int);
+    void meetingComboEdited(bool, int, int) const;
 
 public slots:
 
