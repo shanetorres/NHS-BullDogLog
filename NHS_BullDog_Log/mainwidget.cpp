@@ -1092,6 +1092,7 @@ void mainWidget::on_cancelMeetingsButtonClicked()
 
 void mainWidget::on_meetingComboEdited(bool meetingStatus, int row, int column)
 {
+    qDebug() << "u in bru";
     QVector<bool> meetings;
     int meetingsCounter = 0;
     //assigns a temporary vector to the current students vector
