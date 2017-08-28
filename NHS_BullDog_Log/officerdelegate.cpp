@@ -99,7 +99,7 @@ void officerDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
         student.setLastName(studentLastName);
 
         qDebug() << "After" << student.getFirstName() << " " << student.getLastName();
-        emit studentNameEdited(student, index.row());
+        emit studentNameEdited(student, index.row(), index.column());
 
     }
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4)     //data from spin boxes

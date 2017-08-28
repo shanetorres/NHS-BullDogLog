@@ -37,11 +37,13 @@ public:
 
     void writeToFile();
 
+    void updateModels(CurrentStudent,int);
+
     //contributions page
 
     void populateCurrentStudentsModel();
 
-    void updateContributionsModel();
+    void updateContributionsModel(int);
 
     void initializeContModel();
 
@@ -49,21 +51,13 @@ public:
 
     void populateContributionsModel();
 
-    //admin records
-
-    void adminDeleteRecord();
-
-    void writeToAdminFile();
-
-    void populateCurrentProspectStudentsModel();
-
     //service projects page
 
     void initializeServiceModel();
 
     void populateServiceModel();
 
-    void updateServiceModel();
+    void updateServiceModel(int);
 
     void writeToServiceFile();
 
@@ -73,9 +67,17 @@ public:
 
     void initializeMeetingsModel();
 
-    void updateMeetingsModel();
+    void updateMeetingsModel(int);
 
     void writeToMeetingsFile();
+
+    //admin records
+
+    void adminDeleteRecord();
+
+    void writeToAdminFile();
+
+    void populateCurrentProspectStudentsModel();
 
 private slots:
 
@@ -84,6 +86,7 @@ private slots:
     void on_officerButton_clicked();
 
     void on_quitButton_clicked();
+
 
     /*~OVERALL TAB~*/
 
@@ -95,7 +98,7 @@ private slots:
 
     //Signals from delegates
 
-    void on_studentNameEdited(CurrentStudent, int);
+    void on_studentNameEdited(CurrentStudent, int, int);
 
     void on_studentSpinEdited(CurrentStudent, int);
 
@@ -116,26 +119,6 @@ private slots:
     void on_cancelClicked();
 
     void on_eventEdited(QString, int, int);
-
-    //ADMIN RECORDS
-
-    void on_offMenuButton_2_clicked();
-
-    void on_offAddStudentButton_2_clicked();
-
-    void on_offDeleteStudentButton_2_clicked();
-
-    //ADMIN SIGNALS
-
-    void on_studentNameEdited_2(ProspectStudent, int);
-
-    void on_studentComboEdited_2(ProspectStudent, int);
-
-    void on_studentClassEdited(ProspectStudent, int);
-
-    void on_studentStatusEdited(ProspectStudent, int);
-
-    //void on_studentNotesEdited(ProspectStudent,int);
 
     /*~SERVICE PROJECTS TAB~*/
 
@@ -159,6 +142,27 @@ private slots:
 
     void on_meetingComboEdited(bool, int, int);
 
+    void on_cancelMeetingsButtonClicked();
+
+    //ADMIN RECORDS
+
+    void on_offMenuButton_2_clicked();
+
+    void on_offAddStudentButton_2_clicked();
+
+    void on_offDeleteStudentButton_2_clicked();
+
+    //ADMIN SIGNALS
+
+    void on_studentNameEdited_2(ProspectStudent, int);
+
+    void on_studentComboEdited_2(ProspectStudent, int);
+
+    void on_studentClassEdited(ProspectStudent, int);
+
+    void on_studentStatusEdited(ProspectStudent, int);
+
+    //void on_studentNotesEdited(ProspectStudent,int);
 
 private:
     Ui::mainWidget *ui;
@@ -174,14 +178,6 @@ private:
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
-
-    /*~ADMIN RECORDS~*/
-    QStandardItemModel* currentAdminModel;
-    const int currentAdminCols = 10;
-    adminDelegate *currentAdminDelegate;
-    std::vector<ProspectStudent> currentProspectStudents;
-    int totalProspectStudents; 
-
     /*~SERVICE PROJECTS TAB~*/
     QStandardItemModel* serviceModel;
     ServiceDelegate* serviceDelegate;
@@ -190,7 +186,12 @@ private:
     AddMeetingsDialog* meetingsDialog;
     QVector<QString> dates;
     MeetingsDelegate* meetingsDelegate;
-
+    /*~ADMIN RECORDS~*/
+    QStandardItemModel* currentAdminModel;
+    const int currentAdminCols = 10;
+    adminDelegate *currentAdminDelegate;
+    std::vector<ProspectStudent> currentProspectStudents;
+    int totalProspectStudents;
 
 };
 #endif // MAINWIDGET_H

@@ -80,6 +80,16 @@ QVector<QString> CurrentStudent::getServeVector()
     return serveEvents;
 }
 
+void CurrentStudent::setMeeting(bool meeting)
+{
+    meetingsBool.push_back(meeting);
+}
+
+bool CurrentStudent::getMeeting(int i)
+{
+    return meetingsBool[i];
+}
+
 void CurrentStudent::setMeetingsBool(QVector<bool> meetings)
 {
     meetingsBool.clear();

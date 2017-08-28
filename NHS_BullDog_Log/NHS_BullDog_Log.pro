@@ -69,7 +69,8 @@ DISTFILES += \
     png files/nhslogo.png \
     nhslogo.png \
     nhslogo_a2I_icon.ico\
-    data/serviceprojects.csv
+    data/serviceprojects.csv \
+    data/meetings.csv
 
 
 
