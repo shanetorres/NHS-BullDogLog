@@ -142,6 +142,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
                  << student.getApprovalBool() << student.getStudentGpa();
 
         emit studentComboEdited2(student, index.row());
+        emit checkStudentPromo(student, index.row());
     }
     else if (index.column() == 7) {
         ProspectStudent student;
@@ -169,6 +170,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         else if (comboBox->currentText() == "Applicant") { student.setStudentStatus(false); }
         else { student.setStudentStatus(false); }
         emit studentStatusEdited(student, index.row());
+
     }
     else if (index.column() == 9)         //data from the line edits is assigned to a student object and that object is then emitted
     {

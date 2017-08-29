@@ -168,7 +168,7 @@ private slots:
 
     void on_studentNotesEdited(ProspectStudent, int);
 
-    //void on_studentNotesEdited(ProspectStudent,int);
+    void checkStudentPromo(ProspectStudent, int);
 
 private:
     Ui::mainWidget *ui;

@@ -1351,12 +1351,14 @@ void mainWidget::on_studentComboEdited2(ProspectStudent student, int row)
              << currentProspectStudents[row].getRecommendationBool() << ", " << currentProspectStudents[row].getApprovalBool() << ", "
              << currentProspectStudents[row].getStudentGpa();
    writeToAdminFile();
+   checkStudentPromo(student, row);
 
 }
 //assings data from the spin boxes to an object in the vector
 void mainWidget::on_studentClassEdited(ProspectStudent student, int row)
 {
     currentProspectStudents[row].setStudentClass(student.getStudentClass());
+
     qDebug() << "Student Data AFTER SPIN: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
              << currentProspectStudents[row].getStudentClass();
     writeToAdminFile();
@@ -1369,7 +1371,7 @@ void mainWidget::on_studentStatusEdited(ProspectStudent student, int row)
     qDebug() << "Student Data: " << currentProspectStudents[row].getFirstName() << ", " << currentProspectStudents[row].getLastName() << ", "
              << currentProspectStudents[row].getStudentStatus();
     writeToAdminFile();
-
+    checkStudentPromo(student, row);
 }
 
 void mainWidget::on_studentNotesEdited(ProspectStudent student, int row)
@@ -1597,6 +1599,29 @@ void mainWidget::populateCurrentProspectStudentsModel()
             lineindex++;
         }
     }
+    }
+}
+
+void mainWidget::checkStudentPromo(ProspectStudent student, int row)
+{
+    if (currentProspectStudents[row].getApplicationBool() == 1 && currentProspectStudents[row].getEssayBool() == 1 && currentProspectStudents[row].getRecommendationBool() == 1 &&
+            currentProspectStudents[row].getApprovalBool() == 1 && currentProspectStudents[row].getStudentGpa() == 1 && currentProspectStudents[row].getStudentStatus() != 1) {
+        disableButtons2();
+
+        //Message box confirms whether or not the record should be deleted
+        QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Student Promotion",
+                     "This Student has met all of the requirements: " + currentProspectStudents[row].getFirstName() + " " + currentProspectStudents[row].getLastName() + "\n\n"
+                     "would you like to upgrade " + currentProspectStudents[row].getFirstName() + " " + currentProspectStudents[row].getLastName() +
+                                                                  " to a member and add this student to officer records?", QMessageBox::Yes | QMessageBox::No);
+
+        if (reply == QMessageBox::Yes) {
+            currentProspectStudents[row].setStudentStatus(1);
+            writeToAdminFile();
+            enableButtons2();
+        }
+        else {
+            enableButtons2();
+        }
     }
 }
 
