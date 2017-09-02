@@ -7,7 +7,10 @@
 
 adminDelegate::adminDelegate(QObject *parent) : QItemDelegate(parent)
 {
-
+    //the text that is dispalyed in the combo box
+    Items.push_back(" ");
+    Items.push_back("No");
+    Items.push_back("Yes");
 }
 
 QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
@@ -22,8 +25,10 @@ QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5 || index.column() == 6)
     {
         QComboBox *editor = new QComboBox(parent);
-        editor->addItem("Yes");
-        editor->addItem("No");
+        for (int i  = 0; i < Items.size(); i++)
+        {
+            editor->addItem(Items[i]);
+        }
         return editor;
     }
     else if (index.column() == 7) {
@@ -34,6 +39,7 @@ QWidget *adminDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
     }
     else if (index.column() == 8) {
         QComboBox *editor = new QComboBox(parent);
+        editor->addItem(" ");
         editor->addItem("Applicant");
         editor->addItem("Member");
         return editor;
@@ -70,6 +76,12 @@ void adminDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         comboBox->setCurrentText(value);
     }
+    else if(index.column() == 9)
+    {
+        QString value = index.model()->data(index, Qt::EditRole).toString();
+        QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
+        lineEdit->setText(value);
+    }
 }
 
 void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -96,7 +108,7 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         student.setLastName(studentLastName);
 
         qDebug() << "After" << student.getFirstName() << " " << student.getLastName();
-        emit studentNameEdited_2(student, index.row());
+        emit studentNameEdited2(student, index.row());
 
     }
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5 || index.column() == 6)     //data from combo boxes
@@ -129,7 +141,8 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         qDebug() << "COMBOBOX: " << student.getApplicationBool() << " " << student.getEssayBool() << " " << student.getRecommendationBool() << " "
                  << student.getApprovalBool() << student.getStudentGpa();
 
-        emit studentComboEdited_2(student, index.row());
+        emit studentComboEdited2(student, index.row());
+        emit checkStudentPromo(student, index.row());
     }
     else if (index.column() == 7) {
         ProspectStudent student;
@@ -137,11 +150,12 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         spinBox->interpretText();
         int value = spinBox->value();
         model->setData(index, value, Qt::EditRole);
+        int studentClass;
 
         QModelIndex dataIndex = model->index(index.row(), 7, QModelIndex());
-        int studentDataInt = dataIndex.model()->data(dataIndex, Qt::EditRole).toInt();
+        studentClass = dataIndex.model()->data(dataIndex, Qt::EditRole).toInt();
 
-        student.setStudentClass(studentDataInt);
+        student.setStudentClass(studentClass);
 
         qDebug() << "SPINBOX: " << student.getStudentClass();
         emit studentClassEdited(student, index.row());
@@ -156,6 +170,27 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
         else if (comboBox->currentText() == "Applicant") { student.setStudentStatus(false); }
         else { student.setStudentStatus(false); }
         emit studentStatusEdited(student, index.row());
+
+    }
+    else if (index.column() == 9)         //data from the line edits is assigned to a student object and that object is then emitted
+    {
+        ProspectStudent student;
+        QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
+        QString value = lineEdit->text();
+        model->setData(index,value, Qt::EditRole);
+        QString studentData;
+
+        QModelIndex dataIndex = model->index(index.row(), 9, QModelIndex());
+        studentData = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
+
+        //all student data is assigned to a specific value from the vector of strings
+        QString studentNotes  = studentData;
+
+        student.setStudentNotes(studentNotes);
+
+        qDebug() << "After" << student.getFirstName() << " " << student.getLastName() << " " << student.getStudentNotes();
+        emit studentNotesEdited(student, index.row());
+
     }
 }
 

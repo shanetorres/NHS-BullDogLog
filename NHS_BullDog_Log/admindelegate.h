@@ -8,12 +8,10 @@
 #include <QLineEdit>
 #include <QString>
 #include "prospectstudent.h"
-#include "addnotesdialog.h"
 #include <vector>
 #include <QVector>
 #include <QComboBox>
 #include <QSpinBox>
-#include <QPushButton>
 #include <QLabel>
 
 class ProspectStudent;
@@ -33,19 +31,22 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void studentNameEdited_2(ProspectStudent, int) const;
+    void studentNameEdited2(ProspectStudent, int) const;
 
-    void studentComboEdited_2(ProspectStudent, int) const;
+    void studentComboEdited2(ProspectStudent, int) const;
 
     void studentClassEdited(ProspectStudent, int) const;
 
     void studentStatusEdited(ProspectStudent, int) const;
 
+    void studentNotesEdited(ProspectStudent,  int) const;
+
+    void checkStudentPromo(ProspectStudent, int) const;
 
 public slots:
 
 private:
-     addNotesDialog *addNotes;
+    std::vector<QString> Items;
 
 };
 

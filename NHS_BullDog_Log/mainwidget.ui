@@ -80,21 +80,21 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QPushButton" name="offAddStudentButton_2">
+             <widget class="QPushButton" name="offAddStudentButton2">
               <property name="text">
                <string>Add Student</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="offDeleteStudentButton_2">
+             <widget class="QPushButton" name="offDeleteStudentButton2">
               <property name="text">
                <string>Delete Student</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="offMenuButton_2">
+             <widget class="QPushButton" name="offMenuButton2">
               <property name="text">
                <string>Main Menu</string>
               </property>

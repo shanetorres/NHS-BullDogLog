@@ -75,7 +75,11 @@ public:
 
     void adminDeleteRecord();
 
-    void writeToAdminFile();
+    void writeToAdminFile();    
+    
+    void enableButtons2();
+
+    void disableButtons2();
 
     void populateCurrentProspectStudentsModel();
 
@@ -143,26 +147,28 @@ private slots:
     void on_meetingComboEdited(bool, int, int);
 
     void on_cancelMeetingsButtonClicked();
+    
+     //ADMIN RECORDS
 
-    //ADMIN RECORDS
+    void on_offMenuButton2_clicked();
 
-    void on_offMenuButton_2_clicked();
+    void on_offAddStudentButton2_clicked();
 
-    void on_offAddStudentButton_2_clicked();
-
-    void on_offDeleteStudentButton_2_clicked();
+    void on_offDeleteStudentButton2_clicked();
 
     //ADMIN SIGNALS
 
-    void on_studentNameEdited_2(ProspectStudent, int);
+    void on_studentNameEdited2(ProspectStudent, int);
 
-    void on_studentComboEdited_2(ProspectStudent, int);
+    void on_studentComboEdited2(ProspectStudent, int);
 
     void on_studentClassEdited(ProspectStudent, int);
 
     void on_studentStatusEdited(ProspectStudent, int);
 
-    //void on_studentNotesEdited(ProspectStudent,int);
+    void on_studentNotesEdited(ProspectStudent, int);
+
+    void checkStudentPromo(ProspectStudent, int);
 
 private:
     Ui::mainWidget *ui;
