@@ -41,6 +41,8 @@ signals:
 
     void studentNotesEdited(ProspectStudent,  int) const;
 
+    void checkStudentPromo(ProspectStudent, int) const;
+
 public slots:
 
 private:
