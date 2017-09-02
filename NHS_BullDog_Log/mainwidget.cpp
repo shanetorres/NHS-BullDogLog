@@ -1327,6 +1327,83 @@ void mainWidget::adminDeleteRecord()
     writeToAdminFile();
 }
 
+//deletes the student from the prospect vector and adds them to the currentStudents vector
+void mainWidget::on_promoteStudentButton_clicked()
+{
+    disableButtons2();
+
+    //Message box confirms whether or not the record should be deleted
+    QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Promote Student",
+                 "Are you sure you want to promote this prospect student to a current student? (This will erase this student from the admin records)", QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::Yes)
+    {
+        //inserts a blank record with 6 columns to be edited
+        QList<QStandardItem *> newRecord;
+        newRecord.append(new QStandardItem(currentProspectStudents[ui->currentTableView_2->currentIndex().row()].getFirstName()));
+        newRecord.append(new QStandardItem(currentProspectStudents[ui->currentTableView_2->currentIndex().row()].getLastName()));
+        for (int i = 2; i < currentStudentCols-1; i++)
+        {
+            if (i == 2 || i == 3 || i == 4)
+            {
+                QStandardItem* data = new QStandardItem(" ");
+                data->setFlags(data->flags() & ~Qt::ItemIsEditable);
+                newRecord.append(data);
+            }
+            else
+            {
+                newRecord.append(new QStandardItem(" "));
+            }
+        }
+
+        //appending the student's grade level
+        newRecord.append(new QStandardItem(QString::number(currentProspectStudents[ui->currentTableView_2->currentIndex().row()].getStudentClass())));
+        currentStudentsModel->appendRow(newRecord);
+
+        //creating a currentstudent object and pushing it into a vector everytime a row is added
+        CurrentStudent student;
+        student.setFirstName(currentProspectStudents[ui->currentTableView_2->currentIndex().row()].getFirstName());
+        student.setLastName(currentProspectStudents[ui->currentTableView_2->currentIndex().row()].getLastName());
+        for (int j = 0; j < contributionsModel->columnCount()-2; j++)
+        {
+            student.setStudentEvent(" ");
+            student.setServeEvent(" ");
+        }
+        for (int k = 0; k < meetingsModel->columnCount() - 2; k++)
+        {
+            student.setMeeting(false);
+        }
+        student.setGradeLevel(currentProspectStudents[ui->currentTableView_2->currentIndex().row()].getStudentClass());
+        currentStudents.push_back(student);
+
+        totalStudents++;
+
+        for (int i = 0; i < currentStudents.size(); i++)
+        {
+            qDebug() << "STUDENT " << i << "NAME: " << currentStudents[i].getFirstName();
+        }
+
+        //update all the other officer models and write to all files
+        updateModels(student, currentStudentsModel->rowCount()-1);
+        writeToFile();
+        writeToContributionsFile();
+        writeToServiceFile();
+        writeToMeetingsFile();
+
+        if (totalProspectStudents != 0)
+        {
+            currentProspectStudents.erase(currentProspectStudents.begin()+ui->currentTableView_2->currentIndex().row());
+            totalProspectStudents--;
+        }
+        currentAdminModel->removeRows(ui->currentTableView_2->currentIndex().row(),1);
+        writeToAdminFile();
+        enableButtons2();
+    }
+    else
+    {
+        enableButtons2();
+    }
+
+}
 //assings data from line edits to an object in the vector based on the row number
 void mainWidget::on_studentNameEdited2(ProspectStudent student, int row)
 {
@@ -1612,17 +1689,17 @@ void mainWidget::checkStudentPromo(ProspectStudent student, int row)
         //Message box confirms whether or not the record should be deleted
         QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Student Promotion",
                      "This Student has met all of the requirements: " + currentProspectStudents[row].getFirstName() + " " + currentProspectStudents[row].getLastName() + "\n\n"
-                     "would you like to upgrade " + currentProspectStudents[row].getFirstName() + " " + currentProspectStudents[row].getLastName() +
+                     "Would you like to promote " + currentProspectStudents[row].getFirstName() + " " + currentProspectStudents[row].getLastName() +
                                                                   " to a member and add this student to officer records?", QMessageBox::Yes | QMessageBox::No);
 
         if (reply == QMessageBox::Yes) {
-            currentProspectStudents[row].setStudentStatus(1);
-            writeToAdminFile();
-            enableButtons2();
+            on_promoteStudentButton_clicked();
         }
         else {
             enableButtons2();
         }
     }
 }
+
+
 

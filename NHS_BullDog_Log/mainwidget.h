@@ -170,6 +170,8 @@ private slots:
 
     void checkStudentPromo(ProspectStudent, int);
 
+    void on_promoteStudentButton_clicked();
+
 private:
     Ui::mainWidget *ui;
     /*~OVERALL TAB~*/
