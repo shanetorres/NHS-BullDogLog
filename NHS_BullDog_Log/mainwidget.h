@@ -15,6 +15,7 @@
 #include <vector>
 #include <QFile>
 #include <QTextStream>
+#include <QHeaderView>
 
 namespace Ui {
 class mainWidget;
@@ -89,8 +90,9 @@ private slots:
 
     void on_officerButton_clicked();
 
-    void on_quitButton_clicked();
+    void on_optionsButton_clicked();
 
+    void on_quitButton_clicked();
 
     /*~OVERALL TAB~*/
 
@@ -99,6 +101,8 @@ private slots:
     void on_offAddStudentButton_clicked();
 
     void on_offDeleteStudentButton_clicked();
+
+    void on_sectionClicked(int);
 
     //Signals from delegates
 
@@ -172,34 +176,41 @@ private slots:
 
     void on_promoteStudentButton_clicked();
 
+
+
 private:
     Ui::mainWidget *ui;
+    bool sortOrder[4];
     /*~OVERALL TAB~*/
     QStandardItemModel* currentStudentsModel;
     const int currentStudentCols = 7;
     officerDelegate *currentStudentsDelegate;
     std::vector<CurrentStudent> currentStudents;
     int totalStudents;
+    QHeaderView *currentTableHeader;
     /*~CONTRIBUTIONS TAB~*/
     QStandardItemModel* contributionsModel;
     AddContributionDialog* addDialog;
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
+    QHeaderView *contributionHeader;
     /*~SERVICE PROJECTS TAB~*/
     QStandardItemModel* serviceModel;
     ServiceDelegate* serviceDelegate;
+    QHeaderView *serviceHeader;
     /*~MEETINGS TAB~*/
     QStandardItemModel* meetingsModel;
     AddMeetingsDialog* meetingsDialog;
     QVector<QString> dates;
     MeetingsDelegate* meetingsDelegate;
+    QHeaderView *meetingsHeader;
     /*~ADMIN RECORDS~*/
     QStandardItemModel* currentAdminModel;
     const int currentAdminCols = 10;
     adminDelegate *currentAdminDelegate;
     std::vector<ProspectStudent> currentProspectStudents;
     int totalProspectStudents;
-
+    QHeaderView *prospectHeader;
 };
 #endif // MAINWIDGET_H

@@ -18,6 +18,12 @@ mainWidget::mainWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //populates boolean array used to determine sort order for each model
+    for (int i = 0; i < 4; i++)
+    {
+        sortOrder[i] = 0;
+    }
+
      /*----------------------------GRAPHICS------------------------------*/
 
     this->setWindowTitle("NHS Bulldog Log");
@@ -53,6 +59,9 @@ mainWidget::mainWidget(QWidget *parent) :
     //assigning the custom delegate to the view
     ui->currentTableView_2->setItemDelegate(currentAdminDelegate);
 
+    prospectHeader = ui->currentTableView_2->horizontalHeader();
+    connect(prospectHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
+
     //setting the header text of the model
     currentAdminModel->setHorizontalHeaderItem(0, new QStandardItem(QString("First Name")));
     currentAdminModel->setHorizontalHeaderItem(1, new QStandardItem(QString("Last Name")));
@@ -82,16 +91,13 @@ mainWidget::mainWidget(QWidget *parent) :
     //creating the model for all current students and setting resizing parameters for the view
     currentStudentsModel = new QStandardItemModel(this);
     populateCurrentStudentsModel();          //reading data from file into the table
-    //creating a sorting model and setting the current students model as its source DOESN"T WORK
-//    QSortFilterProxyModel *currentStudentsSortModel = new QSortFilterProxyModel(this);
-//    currentStudentsSortModel->setDynamicSortFilter(false);
 
-//    ui->currentTableView->setModel(currentStudentsModel);
     ui->currentTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->currentTableView->setModel(currentStudentsModel);
-    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
-//    ui->currentTableView->setSortingEnabled(true);
 
+    ui->currentTableView->setItemDelegate(currentStudentsDelegate);
+    currentTableHeader = ui->currentTableView->horizontalHeader();
+    connect(currentTableHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
 
     //assigning the custom delegate to the view
 
@@ -114,10 +120,6 @@ mainWidget::mainWidget(QWidget *parent) :
     contributionsModel = new QStandardItemModel(this);
     addDialog = new AddContributionDialog(this);
     contributionDelegate = new ContributionDelegate(this);
-    //creating a sorting model and setting the contributions model as its source
-//    QSortFilterProxyModel *contSortModel = new QSortFilterProxyModel(this);
-//    contSortModel->setDynamicSortFilter(true);
-//    contSortModel->setSourceModel(contributionsModel);
 
     //connecting the edited signal from the add event dialog box to the main widget
     connect(addDialog, SIGNAL(eventNameEdited(QString)), this, SLOT(on_eventAdded(QString)));
@@ -128,7 +130,6 @@ mainWidget::mainWidget(QWidget *parent) :
 
     ui->contributionsTableView->setModel(contributionsModel);
 
-//    ui->contributionsTableView->setSortingEnabled(true);
     initializeContModel();              //sets the header text for the first two columns as well as resizing properties
     populateContributionsModel();
     ui->contributionsTableView->setItemDelegate(contributionDelegate);
@@ -136,22 +137,20 @@ mainWidget::mainWidget(QWidget *parent) :
     //manual column counter
     contCols = 2;
 
+    contributionHeader = ui->contributionsTableView->horizontalHeader();
+    connect(contributionHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
+
     /*<END CONTRIBUTIONS PAGE>*/
 
     /*<SERVICE PROJECTS PAGE>*/
 
     serviceModel = new QStandardItemModel(this);
     serviceDelegate = new ServiceDelegate(this);
-    //creating a sorting model and setting the service projects model as its source
-//    QSortFilterProxyModel *serviceSortModel = new QSortFilterProxyModel(this);
-//    serviceSortModel->setDynamicSortFilter(true);
-//    serviceSortModel->setSourceModel(serviceModel);
 
     connect(serviceDelegate, SIGNAL(serveEventEdited(QString,int,int)), this, SLOT(on_serveEventEdited(QString,int,int)));
 
     ui->serviceTableView->setModel(serviceModel);
     ui->serviceTableView->setItemDelegate(serviceDelegate);
-//    ui->serviceTableView->setSortingEnabled(true);
     initializeServiceModel();
     populateServiceModel();
 
@@ -185,6 +184,11 @@ void mainWidget::on_adminButton_clicked() { ui->stackedWidget->setCurrentIndex(1
 
 void mainWidget::on_officerButton_clicked() { ui->stackedWidget->setCurrentIndex(2); }
 
+void mainWidget::on_optionsButton_clicked()
+{
+
+}
+
 void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
 void mainWidget::updateModels(CurrentStudent student, int row)
@@ -213,6 +217,66 @@ void mainWidget::updateModels(CurrentStudent student, int row)
 }
 
 /*---------------------OVERALL TAB ON OFFICER PAGE--------------------*/
+
+void mainWidget::on_sectionClicked(int index)
+{
+//    if (ui->stackedWidget->currentIndex() == 1)
+//    {
+//        if (sortOrder[0] == 0)
+//        {
+//            currentAdminModel->sort(index,Qt::AscendingOrder);
+//            sortOrder[0] = 1;
+//        }
+//        else if (sortOrder[0] == 1)
+//        {
+//            currentAdminModel->sort(index,Qt::DescendingOrder);
+//            sortOrder[0] = 0;
+//        }
+//    }
+//    if (ui->stackedWidget->currentIndex() == 2)
+//    {
+//        if (ui->tabWidget->currentIndex() == 0)
+//        {
+//            if (sortOrder[1] == 0)
+//            {
+                currentStudentsModel->setSortRole(Qt::EditRole);
+                currentStudentsModel->sort(index,Qt::AscendingOrder);
+//                sortOrder[1] = 1;
+//                writeToFile();
+                for (int i = 0; i < currentStudents.size(); i++)
+                {
+                    qDebug() << "SORT CHECk PLS: ";
+                    qDebug() << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
+                                                               << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
+                                                               << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
+                                                                  currentStudents[i].getGradeLevel() << "," << endl;
+                }
+//                }
+//            }
+//            else if (sortOrder[1] == 1)
+//            {
+//                currentStudentsModel->sort(index,Qt::DescendingOrder);
+//                sortOrder[1] = 0;
+//                writeToFile();
+//            }
+//            writeToFile();
+//        }
+//        if (ui->tabWidget->currentIndex() == 1)
+//        {
+//            if (sortOrder[2] == 0)
+//            {
+//                contributionsModel->sort(index,Qt::AscendingOrder);
+//                sortOrder[2] = 1;
+//            }
+//            if (sortOrder[2] == 1)
+//            {
+//                contributionsModel->sort(index,Qt::DescendingOrder);
+//                sortOrder[2] = 0;
+//            }
+//            writeToContributionsFile();
+//        }
+//    }
+}
 
 void mainWidget::on_offMenuButton_clicked() { ui->stackedWidget->setCurrentIndex(0); mainWidget::setFixedSize(850, 550); }
 
@@ -379,6 +443,7 @@ void mainWidget::writeToFile()
     QFile file(filename);
     file.open(QIODevice::ReadWrite | QIODevice::Truncate);
     QTextStream stream(&file);
+    qDebug() << "Sort check: ";
     for (int i = 0; i < currentStudents.size(); i++)
     {
         //not the best solution, but eliminating a bug that sets these values to random numbers if not entered
@@ -415,6 +480,10 @@ void mainWidget::writeToFile()
             currentStudents[i].setLastName(" ");
         }
 
+        qDebug() << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
+                                                   << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
+                                                   << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
+                                                      currentStudents[i].getGradeLevel() << "," << endl;
         stream << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
                                                    << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
                                                    << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
@@ -499,7 +568,15 @@ void mainWidget::populateCurrentStudentsModel()
                                 currentStudentsModel->setItem(lineindex, j, new QStandardItem(newRecord[j]));
                             }
                         }
+                        for (int i = 2; i < 7; i++)
+                        {
+                            if (newRecord[i].size() == 0)
+                            {
+                                newRecord.at(i) = " ";
+                            }
+                        }
                       }
+
 
                   //creating a student object with the information parsed from the file
                   CurrentStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toInt(), newRecord.at(3).toInt(), newRecord.at(4).toInt(), newRecord.at(5).toUInt(), newRecord.at(6).toInt());
@@ -1595,6 +1672,7 @@ void mainWidget::populateCurrentProspectStudentsModel()
                         }
                       }
 
+
                   //creating a prospect student object with the information parsed from the file
                   ProspectStudent student(newRecord.at(0), newRecord.at(1), newRecord.at(2).toUInt(), newRecord.at(3).toUInt(), newRecord.at(4).toUInt(),
                                           newRecord.at(5).toUInt(), newRecord.at(6).toUInt(), newRecord.at(7).toInt(), newRecord.at(8).toUInt(), newRecord.at(9));
@@ -1700,6 +1778,4 @@ void mainWidget::checkStudentPromo(ProspectStudent student, int row)
         }
     }
 }
-
-
 

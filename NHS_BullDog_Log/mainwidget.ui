@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="startPage">
       <layout class="QGridLayout" name="gridLayout">
@@ -38,6 +38,13 @@
            <widget class="QPushButton" name="officerButton">
             <property name="text">
              <string>Officer Records</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="optionsButton">
+            <property name="text">
+             <string>Options</string>
             </property>
            </widget>
           </item>
