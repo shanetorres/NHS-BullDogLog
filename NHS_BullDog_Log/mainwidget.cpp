@@ -83,10 +83,7 @@ mainWidget::mainWidget(QWidget *parent) :
     currentStudentsDelegate = new officerDelegate(this);
 
     //connecting all delegate signals to desired slots on the mainwidget
-    connect(currentStudentsDelegate, SIGNAL(studentNameEdited(CurrentStudent, int, int)), this, SLOT(on_studentNameEdited(CurrentStudent, int, int)));
-    connect(currentStudentsDelegate, SIGNAL(studentSpinEdited(CurrentStudent, int)), this, SLOT(on_studentSpinEdited(CurrentStudent, int)));
-    connect(currentStudentsDelegate, SIGNAL(studentComboEdited(CurrentStudent,int)), this, SLOT(on_studentComboEdited(CurrentStudent,int)));
-    connect(currentStudentsDelegate, SIGNAL(studentGradeEdited(CurrentStudent,int)), this, SLOT(on_studentGradeEdited(CurrentStudent,int)));
+    connect(currentStudentsDelegate, SIGNAL(studentEdited(int)), this, SLOT(on_studentEdited(int)));
 
     //creating the model for all current students and setting resizing parameters for the view
     currentStudentsModel = new QStandardItemModel(this);
@@ -191,26 +188,26 @@ void mainWidget::on_optionsButton_clicked()
 
 void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
-void mainWidget::updateModels(CurrentStudent student, int row)
+void mainWidget::updateModels(int row)
 {
     //this mess of code updates the names in the other models, huge performance saver
-    QStandardItem* firstC = new QStandardItem(student.getFirstName());
+    QStandardItem* firstC = new QStandardItem(currentStudentsModel->data(currentStudentsModel->index(row,0)).toString());
     firstC->setFlags(firstC->flags() & ~Qt::ItemIsEditable);
-    QStandardItem* lastC = new QStandardItem(student.getLastName());
+    QStandardItem* lastC = new QStandardItem(currentStudentsModel->data(currentStudentsModel->index(row,1)).toString());
     lastC->setFlags(lastC->flags() & ~Qt::ItemIsEditable);
     contributionsModel->setItem(row,0,firstC);
     contributionsModel->setItem(row,1,lastC);
 
-    QStandardItem* firstS = new QStandardItem(student.getFirstName());
+    QStandardItem* firstS = new QStandardItem(currentStudentsModel->data(currentStudentsModel->index(row,0)).toString());
     firstS->setFlags(firstS->flags() & ~Qt::ItemIsEditable);
-    QStandardItem* lastS = new QStandardItem(student.getLastName());
+    QStandardItem* lastS = new QStandardItem(currentStudentsModel->data(currentStudentsModel->index(row,1)).toString());
     lastS->setFlags(lastS->flags() & ~Qt::ItemIsEditable);
     serviceModel->setItem(row,0, firstS);
     serviceModel->setItem(row,1,lastS);
 
-    QStandardItem* firstM = new QStandardItem(student.getFirstName());
+    QStandardItem* firstM = new QStandardItem(currentStudentsModel->data(currentStudentsModel->index(row,0)).toString());
     firstM->setFlags(firstM->flags() & ~Qt::ItemIsEditable);
-    QStandardItem* lastM = new QStandardItem(student.getLastName());
+    QStandardItem* lastM = new QStandardItem(currentStudentsModel->data(currentStudentsModel->index(row,1)).toString());
     lastM->setFlags(lastM->flags() & ~Qt::ItemIsEditable);
     meetingsModel->setItem(row,0, firstM);
     meetingsModel->setItem(row,1,lastM);
@@ -241,8 +238,11 @@ void mainWidget::on_sectionClicked(int index)
 //            {
                 currentStudentsModel->setSortRole(Qt::EditRole);
                 currentStudentsModel->sort(index,Qt::AscendingOrder);
+                contributionsModel->sort(index,Qt::AscendingOrder);
+                serviceModel->sort(index,Qt::AscendingOrder);
+                meetingsModel->sort(index,Qt::AscendingOrder);
 //                sortOrder[1] = 1;
-//                writeToFile();
+                writeToFile();
                 for (int i = 0; i < currentStudents.size(); i++)
                 {
                     qDebug() << "SORT CHECk PLS: ";
@@ -319,7 +319,7 @@ void mainWidget::on_offAddStudentButton_clicked()
    {
        qDebug() << "STUDENT " << i << "NAME: " << currentStudents[i].getFirstName();
    }
-   updateModels(student, currentStudentsModel->rowCount()-1);
+   updateModels(currentStudentsModel->rowCount()-1);
     writeToContributionsFile();
     writeToServiceFile();
     writeToMeetingsFile();
@@ -395,44 +395,12 @@ void mainWidget::disableButtons()
 
 /*----OVERALL TAB DELEGATE SLOTS----*/
 
-
-//assigns data from line edits to an object in the vector based on the row number
-void mainWidget::on_studentNameEdited(CurrentStudent student, int row, int column)
+void mainWidget::on_studentEdited(int row)
 {
-    currentStudents[row].setFirstName(student.getFirstName());
-    currentStudents[row].setLastName(student.getLastName());
-    qDebug() << "Student Data: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName();
-    updateModels(student, row);
+    updateModels(row);
     writeToFile();
 }
 
-//assigns data from the spin boxes to an object in the vector
-void mainWidget::on_studentSpinEdited(CurrentStudent student, int row)
-{
-    currentStudents[row].setContributions(student.getContributions());
-    currentStudents[row].setServProjects(student.getServProjects());
-    currentStudents[row].setAttendedMeetings(student.getAttendedMeetings());
-    qDebug() << "Student Data AFTER SPIN: " << currentStudents[row].getFirstName() << ", " << currentStudents[row].getLastName() << ", "
-             << currentStudents[row].getContributions() << ", " << currentStudents[row].getServProjects()
-             << ", " << currentStudents[row].getAttendedMeetings() << ", " << currentStudents[row].getInductionAttendance();
-    writeToFile();
-}
-
-//assigns data from the combo box to an object in the vector
-void mainWidget::on_studentComboEdited(CurrentStudent student, int row)
-{
-    currentStudents[row].setInductionAttendance(student.getInductionAttendance());
-    qDebug() << "ATTENDANCE: " << currentStudents[row].getInductionAttendance();
-    writeToFile();
-}
-
-void mainWidget::on_studentGradeEdited(CurrentStudent student, int row)
-{
-    qDebug() << "IN MY G";
-    qDebug() << "STUDENT GRADEEEE: " << student.getGradeLevel();
-    currentStudents[row].setGradeLevel(student.getGradeLevel());
-    writeToFile();
-}
 
 /*----END OVERALL TAB DELEGATE SLOTS----*/
 
@@ -441,54 +409,34 @@ void mainWidget::writeToFile()
 {
     QString filename = "currentstudents.csv";
     QFile file(filename);
-    file.open(QIODevice::ReadWrite | QIODevice::Truncate);
-    QTextStream stream(&file);
-    qDebug() << "Sort check: ";
-    for (int i = 0; i < currentStudents.size(); i++)
-    {
-        //not the best solution, but eliminating a bug that sets these values to random numbers if not entered
-        if (currentStudents[i].getContributions() > 10 || currentStudents[i].getContributions() < 0)
-        {
-            currentStudents[i].setContributions(0);
-        }
-        if (currentStudents[i].getServProjects() > 10 || currentStudents[i].getServProjects() < 0)
-        {
-            currentStudents[i].setServProjects(0);
-        }
-        if (currentStudents[i].getAttendedMeetings() > 10 || currentStudents[i].getAttendedMeetings() < 0)
-        {
-            currentStudents[i].setAttendedMeetings(0);
-        }
-        if (currentStudents[i].getInductionAttendance() > 1)
-        {
-            currentStudents[i].setInductionAttendance(false);
-        }
-        if (currentStudents[i].getGradeLevel() > 12 || currentStudents[i].getGradeLevel() < 11)
-        {
-            currentStudents[i].setGradeLevel(11);
-        }
-        if (currentStudents[i].getFirstName().size() == 0 && currentStudents[i].getLastName().size() == 0)
-        {
-            currentStudents[i].setAttendedMeetings(0);
-        }
-        if (currentStudents[i].getFirstName().size() == 0)
-        {
-            currentStudents[i].setFirstName(" ");
-        }
-        if (currentStudents[i].getLastName().size() == 0)
-        {
-            currentStudents[i].setLastName(" ");
-        }
 
-        qDebug() << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
-                                                   << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
-                                                   << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
-                                                      currentStudents[i].getGradeLevel() << "," << endl;
-        stream << currentStudents[i].getFirstName() << "," << currentStudents[i].getLastName() << ","
-                                                   << currentStudents[i].getContributions() << "," << currentStudents[i].getServProjects()
-                                                   << "," << currentStudents[i].getAttendedMeetings() << "," << currentStudents[i].getInductionAttendance() << "," <<
-                                                      currentStudents[i].getGradeLevel() << "," << endl;
+    // [Collect model data to QString]
+    QString textData;
+    int rows = currentStudentsModel->rowCount();
+    int columns = currentStudentsModel->columnCount();
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+
+                textData += currentStudentsModel->data(currentStudentsModel->index(i,j)).toString();
+                qDebug() << "TEXT DATA: " << currentStudentsModel->data(currentStudentsModel->index(i,j)).toString();
+                textData += ",";     // for .csv file format
+        }
+        textData += "\n";             // (optional: for new line segmentation)
     }
+
+    // [Save to file] (header file <QFile> needed)
+    // .csv
+
+    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+    qDebug() << "TEXT DATA: " << textData;
+        QTextStream stream(&file);
+        stream << textData;
+
+        file.close();
+    }
+
+
 }
 
 
@@ -583,19 +531,17 @@ void mainWidget::populateCurrentStudentsModel()
                   currentStudents.push_back(student);
 
                 //converting the boolean value of induction attendance to a string of text displayed to the user
-                if (student.getInductionAttendance() == 0)
-                {
-                    QStandardItem *item = new QStandardItem("No");
-                    currentStudentsModel->setItem(lineindex, 5, item);
-                }
-                else if (student.getInductionAttendance() == 1)
-                {
-                    QStandardItem *item = new QStandardItem("Yes");
-                    currentStudentsModel->setItem(lineindex, 5, item);
-                }
+//                if (student.getInductionAttendance() == 0)
+//                {
+//                    QStandardItem *item = new QStandardItem("No");
+//                    currentStudentsModel->setItem(lineindex, 5, item);
+//                }
+//                else if (student.getInductionAttendance() == 1)
+//                {
+//                    QStandardItem *item = new QStandardItem("Yes");
+//                    currentStudentsModel->setItem(lineindex, 5, item);
+//                }
 
-                qDebug() << "POPULATE STUDENT: " << student.getFirstName() << ", " << student.getLastName() << ", " << student.getContributions()
-                                                        << ", " << student.getServProjects() << ", " << student.getAttendedMeetings() << ", " << student.getInductionAttendance() << ", " << student.getGradeLevel();
                 totalStudents++;
              }
              catch (const std::out_of_range& e)
@@ -1460,7 +1406,7 @@ void mainWidget::on_promoteStudentButton_clicked()
         }
 
         //update all the other officer models and write to all files
-        updateModels(student, currentStudentsModel->rowCount()-1);
+        updateModels(currentStudentsModel->rowCount()-1);
         writeToFile();
         writeToContributionsFile();
         writeToServiceFile();

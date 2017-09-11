@@ -38,7 +38,7 @@ public:
 
     void writeToFile();
 
-    void updateModels(CurrentStudent,int);
+    void updateModels(int);
 
     //contributions page
 
@@ -106,13 +106,7 @@ private slots:
 
     //Signals from delegates
 
-    void on_studentNameEdited(CurrentStudent, int, int);
-
-    void on_studentSpinEdited(CurrentStudent, int);
-
-    void on_studentComboEdited(CurrentStudent, int);
-
-    void on_studentGradeEdited(CurrentStudent, int);
+    void on_studentEdited(int);
 
     /*~CONTRIBUTIONS TAB~*/
 

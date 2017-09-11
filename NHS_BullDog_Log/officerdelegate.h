@@ -33,13 +33,8 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void studentNameEdited(CurrentStudent, int, int) const;
 
-    void studentSpinEdited(CurrentStudent, int) const;
-
-    void studentComboEdited(CurrentStudent, int) const;
-
-    void studentGradeEdited(CurrentStudent, int) const;
+    void studentEdited(int) const;
 
 
 public slots:
