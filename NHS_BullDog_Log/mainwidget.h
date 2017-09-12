@@ -7,7 +7,6 @@
 #include "admindelegate.h"
 #include "contributiondelegate.h"
 #include "servicedelegate.h"
-#include "currentstudent.h"
 #include "prospectstudent.h"
 #include "addcontributiondialog.h"
 #include "addmeetingsdialog.h"
@@ -120,7 +119,7 @@ private slots:
 
     void on_cancelClicked();
 
-    void on_eventEdited(QString, int, int);
+    void on_eventEdited(int, int);
 
     /*~SERVICE PROJECTS TAB~*/
 
@@ -130,7 +129,7 @@ private slots:
 
     void on_serveDeleteEventButton_clicked();
 
-    void on_serveEventEdited(QString, int, int);
+    void on_serveEventEdited(int, int);
 
     /*~MEETINGS TAB~*/
 
@@ -142,7 +141,7 @@ private slots:
 
     void on_dateAdded(QString);
 
-    void on_meetingComboEdited(bool, int, int);
+    void on_meetingComboEdited(int, int);
 
     void on_cancelMeetingsButtonClicked();
     
@@ -179,7 +178,6 @@ private:
     QStandardItemModel* currentStudentsModel;
     const int currentStudentCols = 7;
     officerDelegate *currentStudentsDelegate;
-    std::vector<CurrentStudent> currentStudents;
     int totalStudents;
     QHeaderView *currentTableHeader;
     /*~CONTRIBUTIONS TAB~*/

@@ -7,7 +7,6 @@
 #include <QSize>
 #include <QLineEdit>
 #include <QString>
-#include "currentstudent.h"
 #include <vector>
 #include <QVector>
 #include <QSpinBox>

@@ -30,11 +30,7 @@ void MeetingsDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
     QComboBox *comboBox = static_cast<QComboBox*>(editor);
     model->setData(index, comboBox->currentText(), Qt::EditRole);
 
-    //sets the bool value of the student's attendance dependent on the selected item of the combo box
-    if (comboBox->currentText() == "Present") { meetingStatus = true; }
-    else if (comboBox->currentText() == "No") { meetingStatus = false; }
-    else { meetingStatus = false; }
-    emit meetingComboEdited(meetingStatus, index.row(), index.column());
+    emit meetingComboEdited(index.row(), index.column());
 }
 
 void MeetingsDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const

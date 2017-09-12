@@ -25,13 +25,7 @@ void ServiceDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, c
     model->setData(index,value, Qt::EditRole);
     if (model->columnCount() > 2)
     {
-        //if the column being edited is not the first or last name, then the data within the line edit is emitted
-        if (index.column() != 0 && index.column() != 1)
-        {
-            QModelIndex dataIndex = model->index(index.row(), index.column(), QModelIndex());
-            QString event = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
-            emit serveEventEdited(event, index.row(), index.column());
-        }
+            emit serveEventEdited(index.row(), index.column());
     }
 }
 

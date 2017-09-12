@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QItemDelegate>
 #include <QLineEdit>
-#include "currentstudent.h"
 #include <QVector>
 
 class CurrentStudent;
@@ -24,7 +23,7 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void eventEdited(QString, int, int) const;
+    void eventEdited(int, int) const;
 
 public slots:
 };

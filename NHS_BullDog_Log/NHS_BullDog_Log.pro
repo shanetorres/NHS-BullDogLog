@@ -27,7 +27,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwidget.cpp \
     officerdelegate.cpp \
-    currentstudent.cpp \
     addcontributiondialog.cpp \
     contributiondelegate.cpp \
     admindelegate.cpp \
@@ -39,7 +38,6 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwidget.h \
     officerdelegate.h \
-    currentstudent.h \
     contributiondelegate.h \
     addcontributiondialog.h \
     admindelegate.h \

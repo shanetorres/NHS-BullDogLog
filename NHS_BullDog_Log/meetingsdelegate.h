@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QItemDelegate>
 #include <QComboBox>
-#include "currentstudent.h"
 #include <QVector>
 
 
@@ -23,7 +22,7 @@ public:
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
 signals:
-    void meetingComboEdited(bool, int, int) const;
+    void meetingComboEdited(int, int) const;
 
 public slots:
 
