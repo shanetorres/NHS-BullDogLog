@@ -7,7 +7,6 @@
 #include "admindelegate.h"
 #include "contributiondelegate.h"
 #include "servicedelegate.h"
-#include "prospectstudent.h"
 #include "addcontributiondialog.h"
 #include "addmeetingsdialog.h"
 #include "meetingsdelegate.h"
@@ -103,8 +102,6 @@ private slots:
 
     void on_sectionClicked(int);
 
-    //Signals from delegates
-
     void on_studentEdited(int);
 
     /*~CONTRIBUTIONS TAB~*/
@@ -153,19 +150,11 @@ private slots:
 
     void on_offDeleteStudentButton2_clicked();
 
-    //ADMIN SIGNALS
+    //ADMIN SLOTS
 
-    void on_studentNameEdited2(ProspectStudent, int);
+    void on_prospectEdited(int);
 
-    void on_studentComboEdited2(ProspectStudent, int);
-
-    void on_studentClassEdited(ProspectStudent, int);
-
-    void on_studentStatusEdited(ProspectStudent, int);
-
-    void on_studentNotesEdited(ProspectStudent, int);
-
-    void checkStudentPromo(ProspectStudent, int);
+    void checkStudentPromo(int);
 
     void on_promoteStudentButton_clicked();
 
@@ -201,7 +190,6 @@ private:
     QStandardItemModel* currentAdminModel;
     const int currentAdminCols = 10;
     adminDelegate *currentAdminDelegate;
-    std::vector<ProspectStudent> currentProspectStudents;
     int totalProspectStudents;
     QHeaderView *prospectHeader;
 };

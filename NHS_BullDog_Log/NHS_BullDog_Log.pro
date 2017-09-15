@@ -30,7 +30,6 @@ SOURCES += main.cpp\
     addcontributiondialog.cpp \
     contributiondelegate.cpp \
     admindelegate.cpp \
-    prospectstudent.cpp \
     servicedelegate.cpp \
     addmeetingsdialog.cpp \
     meetingsdelegate.cpp
@@ -41,7 +40,6 @@ HEADERS  += mainwidget.h \
     contributiondelegate.h \
     addcontributiondialog.h \
     admindelegate.h \
-    prospectstudent.h \
     servicedelegate.h \
     addmeetingsdialog.h \
     meetingsdelegate.h
