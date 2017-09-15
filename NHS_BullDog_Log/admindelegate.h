@@ -7,7 +7,6 @@
 #include <QSize>
 #include <QLineEdit>
 #include <QString>
-#include "prospectstudent.h"
 #include <vector>
 #include <QVector>
 #include <QComboBox>
@@ -30,18 +29,10 @@ public:
 
     void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-signals:
-    void studentNameEdited2(ProspectStudent, int) const;
+signals:  
+    void prospectEdited(int) const;
 
-    void studentComboEdited2(ProspectStudent, int) const;
-
-    void studentClassEdited(ProspectStudent, int) const;
-
-    void studentStatusEdited(ProspectStudent, int) const;
-
-    void studentNotesEdited(ProspectStudent,  int) const;
-
-    void checkStudentPromo(ProspectStudent, int) const;
+    void checkStudentPromo(int) const;
 
 public slots:
 

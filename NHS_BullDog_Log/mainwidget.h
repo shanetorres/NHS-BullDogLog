@@ -7,14 +7,13 @@
 #include "admindelegate.h"
 #include "contributiondelegate.h"
 #include "servicedelegate.h"
-#include "currentstudent.h"
-#include "prospectstudent.h"
 #include "addcontributiondialog.h"
 #include "addmeetingsdialog.h"
 #include "meetingsdelegate.h"
 #include <vector>
 #include <QFile>
 #include <QTextStream>
+#include <QHeaderView>
 
 namespace Ui {
 class mainWidget;
@@ -37,7 +36,7 @@ public:
 
     void writeToFile();
 
-    void updateModels(CurrentStudent,int);
+    void updateModels(int);
 
     //contributions page
 
@@ -89,8 +88,9 @@ private slots:
 
     void on_officerButton_clicked();
 
-    void on_quitButton_clicked();
+    void on_optionsButton_clicked();
 
+    void on_quitButton_clicked();
 
     /*~OVERALL TAB~*/
 
@@ -100,15 +100,9 @@ private slots:
 
     void on_offDeleteStudentButton_clicked();
 
-    //Signals from delegates
+    void on_sectionClicked(int);
 
-    void on_studentNameEdited(CurrentStudent, int, int);
-
-    void on_studentSpinEdited(CurrentStudent, int);
-
-    void on_studentComboEdited(CurrentStudent, int);
-
-    void on_studentGradeEdited(CurrentStudent, int);
+    void on_studentEdited(int);
 
     /*~CONTRIBUTIONS TAB~*/
 
@@ -122,7 +116,7 @@ private slots:
 
     void on_cancelClicked();
 
-    void on_eventEdited(QString, int, int);
+    void on_eventEdited(int, int);
 
     /*~SERVICE PROJECTS TAB~*/
 
@@ -132,7 +126,7 @@ private slots:
 
     void on_serveDeleteEventButton_clicked();
 
-    void on_serveEventEdited(QString, int, int);
+    void on_serveEventEdited(int, int);
 
     /*~MEETINGS TAB~*/
 
@@ -144,7 +138,7 @@ private slots:
 
     void on_dateAdded(QString);
 
-    void on_meetingComboEdited(bool, int, int);
+    void on_meetingComboEdited(int, int);
 
     void on_cancelMeetingsButtonClicked();
     
@@ -156,48 +150,47 @@ private slots:
 
     void on_offDeleteStudentButton2_clicked();
 
-    //ADMIN SIGNALS
+    //ADMIN SLOTS
 
-    void on_studentNameEdited2(ProspectStudent, int);
+    void on_prospectEdited(int);
 
-    void on_studentComboEdited2(ProspectStudent, int);
+    void checkStudentPromo(int);
 
-    void on_studentClassEdited(ProspectStudent, int);
+    void on_promoteStudentButton_clicked();
 
-    void on_studentStatusEdited(ProspectStudent, int);
 
-    void on_studentNotesEdited(ProspectStudent, int);
-
-    void checkStudentPromo(ProspectStudent, int);
 
 private:
     Ui::mainWidget *ui;
+    bool sortOrder[4];
     /*~OVERALL TAB~*/
     QStandardItemModel* currentStudentsModel;
     const int currentStudentCols = 7;
     officerDelegate *currentStudentsDelegate;
-    std::vector<CurrentStudent> currentStudents;
     int totalStudents;
+    QHeaderView *currentTableHeader;
     /*~CONTRIBUTIONS TAB~*/
     QStandardItemModel* contributionsModel;
     AddContributionDialog* addDialog;
     int contCols;
     ContributionDelegate *contributionDelegate;
     QVector<QString> eventNames;
+    QHeaderView *contributionHeader;
     /*~SERVICE PROJECTS TAB~*/
     QStandardItemModel* serviceModel;
     ServiceDelegate* serviceDelegate;
+    QHeaderView *serviceHeader;
     /*~MEETINGS TAB~*/
     QStandardItemModel* meetingsModel;
     AddMeetingsDialog* meetingsDialog;
     QVector<QString> dates;
     MeetingsDelegate* meetingsDelegate;
+    QHeaderView *meetingsHeader;
     /*~ADMIN RECORDS~*/
     QStandardItemModel* currentAdminModel;
     const int currentAdminCols = 10;
     adminDelegate *currentAdminDelegate;
-    std::vector<ProspectStudent> currentProspectStudents;
     int totalProspectStudents;
-
+    QHeaderView *prospectHeader;
 };
 #endif // MAINWIDGET_H

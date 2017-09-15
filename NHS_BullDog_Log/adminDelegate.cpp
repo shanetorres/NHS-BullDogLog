@@ -88,108 +88,40 @@ void adminDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
 {
     if (index.column() == 0 || index.column() == 1)         //data from the line edits is assigned to a student object and that object is then emitted
     {
-        ProspectStudent student;
         QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
         QString value = lineEdit->text();
         model->setData(index,value, Qt::EditRole);
-        QVector<QString> studentData(2);
-       //a vector of QStrings saves data at specific cells in the tableView
-        for (int i = 0; i < 2; ++i)
-        {
-            QModelIndex dataIndex = model->index(index.row(), i, QModelIndex());
-            studentData[i] = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
-        }
-
-        //all student data is assigned to a specific value from the vector of strings
-        QString studentFirstName = studentData[0];
-        QString studentLastName = studentData[1];
-
-        student.setFirstName(studentFirstName);
-        student.setLastName(studentLastName);
-
-        qDebug() << "After" << student.getFirstName() << " " << student.getLastName();
-        emit studentNameEdited2(student, index.row());
+        emit prospectEdited(index.row());
 
     }
     else if (index.column() == 2 || index.column() == 3 || index.column() == 4 || index.column() == 5 || index.column() == 6)     //data from combo boxes
     {
-        ProspectStudent student;
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         model->setData(index, comboBox->currentText(), Qt::EditRole);
-
-        QVector<bool> studentRequirements(5);
-        QVector<QString> studentDataString(5);
-
-        for (int i = 0; i < 5; i++)
-        {
-            QModelIndex dataIndex = model->index(index.row(), i + 2, QModelIndex());
-            studentDataString[i] = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
-            if (studentDataString[i] == "Yes") {
-                studentRequirements[i] = true;
-            }
-            else if (studentDataString[i] == "No") {
-                studentRequirements[i] = false;
-            }
-        }
-
-        student.setApplicationBool(studentRequirements[0]);
-        student.setEssayBool(studentRequirements[1]);
-        student.setRecommendationBool(studentRequirements[2]);
-        student.setApprovalBool(studentRequirements[3]);
-        student.setStudentGpa(studentRequirements[4]);
-
-        qDebug() << "COMBOBOX: " << student.getApplicationBool() << " " << student.getEssayBool() << " " << student.getRecommendationBool() << " "
-                 << student.getApprovalBool() << student.getStudentGpa();
-
-        emit studentComboEdited2(student, index.row());
-        emit checkStudentPromo(student, index.row());
+        emit prospectEdited(index.row());
+        emit checkStudentPromo(index.row());
     }
     else if (index.column() == 7) {
-        ProspectStudent student;
         QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
         spinBox->interpretText();
         int value = spinBox->value();
         model->setData(index, value, Qt::EditRole);
-        int studentClass;
 
-        QModelIndex dataIndex = model->index(index.row(), 7, QModelIndex());
-        studentClass = dataIndex.model()->data(dataIndex, Qt::EditRole).toInt();
-
-        student.setStudentClass(studentClass);
-
-        qDebug() << "SPINBOX: " << student.getStudentClass();
-        emit studentClassEdited(student, index.row());
+        emit prospectEdited(index.row());
     }
     else if (index.column() == 8) {
-        ProspectStudent student;
         QComboBox *comboBox = static_cast<QComboBox*>(editor);
         model->setData(index, comboBox->currentText(), Qt::EditRole);
-
-        //sets the bool value of the student's attendance dependent on the selected item of the combo box
-        if (comboBox->currentText() == "Member") { student.setStudentStatus(true); }
-        else if (comboBox->currentText() == "Applicant") { student.setStudentStatus(false); }
-        else { student.setStudentStatus(false); }
-        emit studentStatusEdited(student, index.row());
-
+        emit prospectEdited(index.row());
     }
     else if (index.column() == 9)         //data from the line edits is assigned to a student object and that object is then emitted
     {
-        ProspectStudent student;
         QLineEdit *lineEdit = static_cast<QLineEdit*>(editor);
         QString value = lineEdit->text();
         model->setData(index,value, Qt::EditRole);
-        QString studentData;
 
-        QModelIndex dataIndex = model->index(index.row(), 9, QModelIndex());
-        studentData = dataIndex.model()->data(dataIndex, Qt::EditRole).toString();
 
-        //all student data is assigned to a specific value from the vector of strings
-        QString studentNotes  = studentData;
-
-        student.setStudentNotes(studentNotes);
-
-        qDebug() << "After" << student.getFirstName() << " " << student.getLastName() << " " << student.getStudentNotes();
-        emit studentNotesEdited(student, index.row());
+        emit prospectEdited(index.row());
 
     }
 }
