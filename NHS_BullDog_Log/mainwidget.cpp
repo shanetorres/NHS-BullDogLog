@@ -19,7 +19,7 @@ mainWidget::mainWidget(QWidget *parent) :
     ui->setupUi(this);
 
     //populates boolean array used to determine sort order for each model
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         sortOrder[i] = 0;
     }
@@ -91,6 +91,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
     ui->currentTableView->setItemDelegate(currentStudentsDelegate);
     currentTableHeader = ui->currentTableView->horizontalHeader();
+
     connect(currentTableHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
 
     //assigning the custom delegate to the view
@@ -140,6 +141,7 @@ mainWidget::mainWidget(QWidget *parent) :
 
     serviceModel = new QStandardItemModel(this);
     serviceDelegate = new ServiceDelegate(this);
+    serviceHeader = ui->serviceTableView->horizontalHeader();
 
     connect(serviceDelegate, SIGNAL(serveEventEdited(int,int)), this, SLOT(on_serveEventEdited(int,int)));
 
@@ -147,6 +149,8 @@ mainWidget::mainWidget(QWidget *parent) :
     ui->serviceTableView->setItemDelegate(serviceDelegate);
     initializeServiceModel();
     populateServiceModel();
+
+    connect(serviceHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
 
 
     /*<END SERVICE PROJECTS PAGE>*/
@@ -156,10 +160,13 @@ mainWidget::mainWidget(QWidget *parent) :
     meetingsModel = new QStandardItemModel(this);
     meetingsDialog = new AddMeetingsDialog(this);
     meetingsDelegate = new MeetingsDelegate(this);
+    meetingsHeader = ui->meetingsTableView->horizontalHeader();
 
     connect(meetingsDialog, SIGNAL(dateAdded(QString)), this, SLOT(on_dateAdded(QString)));
     connect(meetingsDialog, SIGNAL(cancelClicked()),this, SLOT(on_cancelMeetingsButtonClicked()));
     connect(meetingsDelegate, SIGNAL(meetingComboEdited(int,int)), this, SLOT(on_meetingComboEdited(int,int)));
+    connect(meetingsHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
+
 
     ui->meetingsTableView->setModel(meetingsModel);
     ui->meetingsTableView->setItemDelegate(meetingsDelegate);
@@ -212,6 +219,7 @@ void mainWidget::updateModels(int row)
 
 /*---------------------OVERALL TAB ON OFFICER PAGE--------------------*/
 
+//this slot is called every time a header is clicked on any model to allow for sorting
 void mainWidget::on_sectionClicked(int index)
 {
     if (ui->stackedWidget->currentIndex() == 1 && (index == 0 || index == 1)) //admin records sorting
@@ -228,7 +236,7 @@ void mainWidget::on_sectionClicked(int index)
         }
         writeToAdminFile();
     }
-    if (ui->stackedWidget->currentIndex() == 2)     //officer records sorting
+    else if (ui->stackedWidget->currentIndex() == 2)     //officer records sorting
     {
         if (ui->tabWidget->currentIndex() == 0)     //overall tab sorting
         {
@@ -261,7 +269,7 @@ void mainWidget::on_sectionClicked(int index)
                 writeToMeetingsFile();
             }
         }
-        if (ui->tabWidget->currentIndex() == 1) //contributions model sorting
+        else if (ui->tabWidget->currentIndex() == 1) //contributions model sorting
         {
             if (sortOrder[2] == 0 && (index == 0 || index == 1))
             {
@@ -277,7 +285,7 @@ void mainWidget::on_sectionClicked(int index)
                 writeToServiceFile();
                 writeToMeetingsFile();
             }
-            if (sortOrder[2] == 1 && (index == 0 || index == 1))
+            else if (sortOrder[2] == 1 && (index == 0 || index == 1))
             {
                 currentStudentsModel->sort(index,Qt::DescendingOrder);
                 contributionsModel->sort(index,Qt::DescendingOrder);
@@ -290,7 +298,66 @@ void mainWidget::on_sectionClicked(int index)
                 writeToMeetingsFile();
             }
         }
+        else if (ui->tabWidget->currentIndex() == 2) //service model sorting
+        {
+            if (sortOrder[3] == 0 && (index == 0 || index == 1))
+            {
+                //all models are sorted to prevent from information getting mixed up between the models
+                currentStudentsModel->sort(index,Qt::AscendingOrder);
+                contributionsModel->sort(index,Qt::AscendingOrder);
+                serviceModel->sort(index,Qt::AscendingOrder);
+                meetingsModel->sort(index,Qt::AscendingOrder);
+                sortOrder[3] = 1;       //toggles between 0 and 1 to allow for alternating ascending and descending sorts
+                //sort orders are save to files
+                writeToFile();
+                writeToContributionsFile();
+                writeToServiceFile();
+                writeToMeetingsFile();
+            }
+            else if (sortOrder[3] == 1 && (index == 0 || index == 1))
+            {
+                currentStudentsModel->sort(index,Qt::DescendingOrder);
+                contributionsModel->sort(index,Qt::DescendingOrder);
+                serviceModel->sort(index,Qt::DescendingOrder);
+                meetingsModel->sort(index,Qt::DescendingOrder);
+                sortOrder[3] = 0;
+                writeToFile();
+                writeToContributionsFile();
+                writeToServiceFile();
+                writeToMeetingsFile();
+            }
+        }
+        else if (ui->tabWidget->currentIndex() == 3) //meetings model sorting
+        {
+            if (sortOrder[4] == 0 && (index == 0 || index == 1))
+            {
+                //all models are sorted to prevent from information getting mixed up between the models
+                currentStudentsModel->sort(index,Qt::AscendingOrder);
+                contributionsModel->sort(index,Qt::AscendingOrder);
+                serviceModel->sort(index,Qt::AscendingOrder);
+                meetingsModel->sort(index,Qt::AscendingOrder);
+                sortOrder[4] = 1;       //toggles between 0 and 1 to allow for alternating ascending and descending sorts
+                //sort orders are save to files
+                writeToFile();
+                writeToContributionsFile();
+                writeToServiceFile();
+                writeToMeetingsFile();
+            }
+            else if (sortOrder[4] == 1 && (index == 0 || index == 1))
+            {
+                currentStudentsModel->sort(index,Qt::DescendingOrder);
+                contributionsModel->sort(index,Qt::DescendingOrder);
+                serviceModel->sort(index,Qt::DescendingOrder);
+                meetingsModel->sort(index,Qt::DescendingOrder);
+                sortOrder[4] = 0;
+                writeToFile();
+                writeToContributionsFile();
+                writeToServiceFile();
+                writeToMeetingsFile();
+            }
+        }
     }
+
 }
 
 

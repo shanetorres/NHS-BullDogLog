@@ -14,6 +14,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QHeaderView>
+#include <QSortFilterProxyModel>
 
 namespace Ui {
 class mainWidget;
@@ -164,6 +165,7 @@ private:
     Ui::mainWidget *ui;
     bool sortOrder[4];
     /*~OVERALL TAB~*/
+    QSortFilterProxyModel* currentStudentsSortModel;
     QStandardItemModel* currentStudentsModel;
     const int currentStudentCols = 7;
     officerDelegate *currentStudentsDelegate;
