@@ -89,8 +89,6 @@ private slots:
 
     void on_officerButton_clicked();
 
-    void on_optionsButton_clicked();
-
     void on_quitButton_clicked();
 
     /*~OVERALL TAB~*/

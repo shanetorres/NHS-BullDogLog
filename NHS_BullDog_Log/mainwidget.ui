@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="startPage">
       <layout class="QGridLayout" name="gridLayout">
@@ -38,13 +38,6 @@
            <widget class="QPushButton" name="officerButton">
             <property name="text">
              <string>Officer Records</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="optionsButton">
-            <property name="text">
-             <string>Options</string>
             </property>
            </widget>
           </item>
@@ -138,7 +131,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="overallTab">
           <attribute name="title">
@@ -302,13 +295,6 @@
                <widget class="QPushButton" name="addMeetingButton">
                 <property name="text">
                  <string>Add Meeting</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="editMeetingButton">
-                <property name="text">
-                 <string>Edit Meeting</string>
                 </property>
                </widget>
               </item>

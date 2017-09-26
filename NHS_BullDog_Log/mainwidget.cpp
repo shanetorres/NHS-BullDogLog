@@ -29,9 +29,47 @@ mainWidget::mainWidget(QWidget *parent) :
     this->setWindowTitle("NHS Bulldog Log");
     this->setWindowIcon(QIcon(":/nhslogo_a2I_icon.ico"));
 
-    //this->setStyleSheet("background-color: blue;");
-    //ui->groupBox_2->setStyleSheet("background-color: white; border-color: black;");
-    //ui->currentTableView_2->setStyleSheet("background-color: white; border-color: black;");
+    this->window()->setStyleSheet("background-color: #3f5bb8; border-color: black;");
+        ui->startPage->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->buttonsGroupBox->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->adminButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->officerButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->quitButton->setStyleSheet("background-color: silver; border-color: black;");
+
+        ui->adminPage->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->currentTableView_2->setStyleSheet("background-color: white; border-color: black;");
+        ui->groupBox_2->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->offAddStudentButton2->setStyleSheet("background-color: silver; border-color: black;");
+        ui->offDeleteStudentButton2->setStyleSheet("background-color: silver; border-color: black;");
+        ui->offMenuButton2->setStyleSheet("background-color: silver; border-color: black;");
+
+        ui->officerPage->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->currentTableView->setStyleSheet("background-color: white; border-color: black;");
+        ui->groupBox->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->offAddStudentButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->offDeleteStudentButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->offMenuButton->setStyleSheet("background-color: silver; border-color: black;");
+
+        ui->cont_tab->setStyleSheet("background-color:#3f5bb8; border-color: black;");
+        ui->contributionsGroupBox->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->contAddEventButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->contDeleteEventButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->contMenuButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->contributionsTableView->setStyleSheet("background-color: white; border-color: black;");
+
+        ui->service_tab->setStyleSheet("background-color: #3f5bb8; border-color: black;");
+        ui->serviceProjectsGroupBox->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->serveAddEventButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->serveDeleteEventButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->serveMenuButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->serviceTableView->setStyleSheet("background-color: white; border-color: black;");
+
+        ui->meetings_tab->setStyleSheet("background-color: #3f5bb8; border-color: black;");
+        ui->meetingsGroupBox->setStyleSheet("background-color: khaki; border-color: black;");
+        ui->meetingMenuButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->meetingsTableView->setStyleSheet("background-color: white; border-color: black;");
+        ui->addMeetingButton->setStyleSheet("background-color: silver; border-color: black;");
+        ui->deleteMeetingButton->setStyleSheet("background-color: silver; border-color: black;");
 
     QImage image(":/nhslogo.png");
     QImage image2 = image.scaled(400, 600, Qt::KeepAspectRatio);
@@ -162,8 +200,8 @@ mainWidget::mainWidget(QWidget *parent) :
     meetingsDelegate = new MeetingsDelegate(this);
     meetingsHeader = ui->meetingsTableView->horizontalHeader();
 
-    connect(meetingsDialog, SIGNAL(dateAdded(QString)), this, SLOT(on_dateAdded(QString)));
-    connect(meetingsDialog, SIGNAL(cancelClicked()),this, SLOT(on_cancelMeetingsButtonClicked()));
+    connect(meetingsDialog, SIGNAL(dateAdded(QString)), this, SLOT(on_dateAdded(QString)));     //date added from meetings dialog
+    connect(meetingsDialog, SIGNAL(cancelClicked()),this, SLOT(on_cancelMeetingsButtonClicked())); //cancel button from meetings dialog
     connect(meetingsDelegate, SIGNAL(meetingComboEdited(int,int)), this, SLOT(on_meetingComboEdited(int,int)));
     connect(meetingsHeader, SIGNAL(sectionClicked(int)), this, SLOT(on_sectionClicked(int)));
 
@@ -184,11 +222,6 @@ mainWidget::~mainWidget()
 void mainWidget::on_adminButton_clicked() { ui->stackedWidget->setCurrentIndex(1); }
 
 void mainWidget::on_officerButton_clicked() { ui->stackedWidget->setCurrentIndex(2); }
-
-void mainWidget::on_optionsButton_clicked()
-{
-
-}
 
 void mainWidget::on_quitButton_clicked() { QApplication::quit(); }
 
@@ -240,8 +273,6 @@ void mainWidget::on_sectionClicked(int index)
     {
         if (ui->tabWidget->currentIndex() == 0)     //overall tab sorting
         {
-            //checks to see i
-
             if (sortOrder[1] == 0 && (index == 0 || index == 1)) //if the sort order is ascending and the index is the first or last name header
             {
                 //all models are sorted to prevent from information getting mixed up between the models
@@ -357,7 +388,6 @@ void mainWidget::on_sectionClicked(int index)
             }
         }
     }
-
 }
 
 
@@ -383,7 +413,7 @@ void mainWidget::on_offAddStudentButton_clicked()
    currentStudentsModel->appendRow(newRecord);
 
 
-   updateModels(currentStudentsModel->rowCount()-1);
+   updateModels(currentStudentsModel->rowCount()-1);    //updates the other models with name changes
     writeToContributionsFile();
     writeToServiceFile();
     writeToMeetingsFile();
@@ -462,13 +492,12 @@ void mainWidget::on_studentEdited(int row)
 
 /*----END OVERALL TAB DELEGATE SLOTS----*/
 
-//writes all objects in the current student vector to a file
+//writes all data from the model to a file
 void mainWidget::writeToFile()
 {
     QString filename = "currentstudents.csv";
     QFile file(filename);
 
-    // [Collect model data to QString]
     QString textData;
     int rows = currentStudentsModel->rowCount();
     int columns = currentStudentsModel->columnCount();
@@ -476,18 +505,15 @@ void mainWidget::writeToFile()
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < columns; j++) {
 
-                textData += currentStudentsModel->data(currentStudentsModel->index(i,j)).toString();
-                textData += ",";     // for .csv file format
+                textData += currentStudentsModel->data(currentStudentsModel->index(i,j)).toString(); //appends data to a string which holds all model data
+                textData += ",";
         }
-        textData += "\n";             // (optional: for new line segmentation)
+        textData += "\n";
     }
-
-    // [Save to file] (header file <QFile> needed)
-    // .csv
 
     if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         QTextStream stream(&file);
-        stream << textData;
+        stream << textData; //writes the string
 
         file.close();
     }
@@ -907,11 +933,7 @@ void mainWidget::populateServiceModel()
                 for (int i = 0; i < lineToken.size(); i++)
                 {
                     QString value = lineToken.at(i);
-
                     serviceModel->setHorizontalHeaderItem(i+2, new QStandardItem(value));
-
-                    qDebug() << "EVENT NAMES: " << eventNames[i];
-
                 }
 
             lineindex++;
@@ -1288,13 +1310,14 @@ void mainWidget::populateCurrentProspectStudentsModel()
     }
 }
 
+//checks to see if all student data requirements meet that of a current student
 void mainWidget::checkStudentPromo(int row)
 {
     if (currentAdminModel->data(currentAdminModel->index(row,2)).toString() == "1" && currentAdminModel->data(currentAdminModel->index(row,3)).toString() == "1" && currentAdminModel->data(currentAdminModel->index(row,4)).toString() == "1" &&
             currentAdminModel->data(currentAdminModel->index(row,5)).toString() == "1" && currentAdminModel->data(currentAdminModel->index(row,6)).toString() == "1" && currentAdminModel->data(currentAdminModel->index(row,8)).toString() != "1") {
         disableButtons2();
 
-        //Message box confirms whether or not the record should be deleted
+        //Message box confirms whether or not the record should be added to current students
         QMessageBox::StandardButton reply = QMessageBox::question(this, "Confirm Student Promotion",
                      "This Student has met all of the requirements: " + currentAdminModel->data(currentAdminModel->index(row,0)).toString() + " " + currentAdminModel->data(currentAdminModel->index(row,1)).toString() + "\n\n"
                      "Would you like to promote " + currentAdminModel->data(currentAdminModel->index(row,0)).toString() + " " + currentAdminModel->data(currentAdminModel->index(row,1)).toString() +
