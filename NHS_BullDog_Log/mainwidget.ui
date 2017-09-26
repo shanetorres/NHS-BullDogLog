@@ -42,13 +42,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="optionsButton">
-            <property name="text">
-             <string>Options</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="quitButton">
             <property name="text">
              <string>Quit</string>
@@ -138,7 +131,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="overallTab">
           <attribute name="title">
@@ -302,13 +295,6 @@
                <widget class="QPushButton" name="addMeetingButton">
                 <property name="text">
                  <string>Add Meeting</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="editMeetingButton">
-                <property name="text">
-                 <string>Edit Meeting</string>
                 </property>
                </widget>
               </item>

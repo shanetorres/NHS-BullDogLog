@@ -8,6 +8,7 @@ AddContributionDialog::AddContributionDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(this->width(),this->height());
+    this->setStyleSheet("background-color: khaki; border-color: black;");
 }
 
 AddContributionDialog::~AddContributionDialog()

@@ -7,6 +7,7 @@ AddMeetingsDialog::AddMeetingsDialog(QWidget *parent) :
     ui(new Ui::AddMeetingsDialog)
 {
     ui->setupUi(this);
+    this->setStyleSheet(styleSheet());
 }
 
 AddMeetingsDialog::~AddMeetingsDialog()
